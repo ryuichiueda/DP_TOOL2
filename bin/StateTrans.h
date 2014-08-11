@@ -5,25 +5,15 @@
 #include <sstream>
 #include <cstdlib>
 #include <vector>
+#include "State.h"
 using namespace std;
 
-class ActionTrans{
-public:
-	ActionTrans(string action_name){
-		m_action_name = action_name;
-	}
-private:
-	string m_action_name;
-};
-
-class State{
-public:
-	State(){}
-private:
-	vector<ActionTrans> m_actions;
-};
-
 class StateTrans{
+private:
+	int m_state_num;
+	vector<string> m_actions;
+	int m_resolution;
+	vector<State> m_states;
 public:
 	StateTrans();
 	bool setStateNum(const string &str);
@@ -33,12 +23,11 @@ public:
 	void status(void);
 	State *getState(int num);
 	unsigned int getActionIndex(string &line);
-	bool setStateTrans(int s,int a,int s_to,double p);
-private:
-	int m_state_num;
-	vector<string> m_actions;
-	int m_resolution;
-	vector<State> m_states;
+	bool setStateTrans(int s,int a,int s_to,double p,int cost);
+	bool setValue(int s,int v);
+
+	bool valueIteration(void);
+
 };
 
 #endif

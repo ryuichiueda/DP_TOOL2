@@ -5,8 +5,8 @@
 #include "StateTrans.h"
 using namespace std;
 
-bool parserHeader(string &line);
-bool parserStateTrans(string &line);
+bool parseHeader(string &line);
+bool parseStateTrans(string &line);
 void usage(void);
 void die(string);
 bool tokenizer(string &line,vector<string> &words);
@@ -23,21 +23,32 @@ int main(int argc, char const* argv[])
 
 	//parse of header in state transition file
 	while(ifs_state_trans && getline(ifs_state_trans,buf)){
-		if(parserHeader(buf) == false)
+		if(parseHeader(buf) == false)
 			break;
 	}
-	g_state_trans.status();
+
+	//checking global setting
+	//g_state_trans.status();
 
 	//parse of state transtions in state transition file
 	while(ifs_state_trans && getline(ifs_state_trans,buf)){
-		if(parserStateTrans(buf) == false)
+		if(parseStateTrans(buf) == false)
 			break;
 	}
 
+	//read of state values
+	while(! cin.eof()){
+		int s,v;
+		cin >> s >> v;
+		g_state_trans.setValue(s,v);
+	}
+
+	g_state_trans.valueIteration();
+	
 	return 0;
 }
 
-bool parserHeader(string &line){
+bool parseHeader(string &line){
 	if(line == "%%state transitions%%")
 		return false;
 	
@@ -56,11 +67,16 @@ bool parserHeader(string &line){
 			g_state_trans.setAction(*i);
 		}	
 	}
+	else if(words.at(0) == "resolution"){
+		if(! g_state_trans.setResolution(words.at(1))){
+			die("Invalid Reslution");
+		}
+	}
 
 	return true;
 }
 
-bool parserStateTrans(string &line){
+bool parseStateTrans(string &line){
 	vector<string> words;
 	tokenizer(line,words);
 	if(words.size() < 1)
@@ -78,13 +94,14 @@ bool parserStateTrans(string &line){
 	else if((words.at(0))[0] == '\t'){
 		int s_after = atoi(words.at(1).c_str());
 		double p = atof(words.at(3).c_str());
+		double c = atof(words.at(5).c_str());
 
 		if(s_after < 0)
 			die("Invalid Posterior State");
 		if(p <= 0.0 || p > 1.0)
 			die("Invalid Probability");
 
-		g_state_trans.setStateTrans(state_index,action_index,s_after,p);
+		g_state_trans.setStateTrans(state_index,action_index,s_after,p,c);
 
 	}
 
