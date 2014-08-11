@@ -1,0 +1,70 @@
+====================================
+Tile World Sample for DP_TOOL2
+====================================
+
+This document is README for this sample.
+How to use DP_TOOL2 is also explained
+in this document.
+
+Problem
+====================================
+
+We assume the following tile world.
+
+|-----------------------|
+|       |       |       |
+|state 6|state 7|state 8|
+|       |       |       |
+|-----------------------|
+|       |       |       |
+|state 3|state 4|state 5|
+|       |       |       |
+|-------|-------|-------|
+|       |       |       |
+|state 0|state 1|state 2|
+|       |       |       |
+|-------|-------|-------|
+
+At first, a robot exists one of the state. The task is that the robot goes to
+the state 8 from any initial state with minimum number of steps.
+
+The robot can choose
+`left', `right', `up', and `down'
+so as to change its state.
+When an action is done,
+the robot receives value 1
+as a cost.
+
+The optimal value function
+will be calculated from this
+definition.
+
+|-----------------------|
+|       |       |       |
+|   2   |   1   |   0   |
+|       |       |       |
+|-----------------------|
+|       |       |       |
+|   3   |   2   |   1   |
+|       |       |       |
+|-------|-------|-------|
+|       |       |       |
+|   4   |   3   |   2   |
+|       |       |       |
+|-------|-------|-------|
+
+How to use DP_TOOL2
+====================================
+
+At first, we prepare `state_trans' `values.0'
+file to represent the task and dynamics of the system.
+Though we write it by hand
+for this sample, it should be automatically
+obtained by a program written by a user.
+
+To use value_iteration command, 
+the state_trans file is read from
+standard input of value_iteration command.
+
+$ cat values.0 | value_iteration ../../bin/value_iteration > values.1
+
