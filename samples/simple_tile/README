@@ -82,6 +82,8 @@ for overflow.
 
 	3: the initial values should give values of final states.
 
+	4: values and costs should not exceed 2^46 = 70368744177664.
+
 To use value_iteration command, 
 the state_trans file is read from
 standard input of value_iteration command.
