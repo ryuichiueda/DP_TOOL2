@@ -4,4 +4,14 @@ DP_TOOL2
 
 Commands for offline calculation of dynamic programming
 
-Usage: see samples/simple_tile/README
+environment
+=======================
+
+* 64bit OS X
+* 64bit Linux
+
+usage
+=======================
+
+see samples/simple_tile/README
+
