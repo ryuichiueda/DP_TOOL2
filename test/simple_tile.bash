@@ -2,7 +2,7 @@
 tmp=/tmp/$$
 
 ERROR_CHECK(){
-	[ $(tr -d ' 0' <<< ${PIPESTATUS[@]} ) = "" ] && return
+	[ "$(tr -d ' 0' <<< ${PIPESTATUS[@]} )" = "" ] && return
 	echo "ERROR:" $1 >&2
 	rm -f $tmp-*
 	exit 1
@@ -27,5 +27,5 @@ FIN
 
 diff $tmp-output $tmp-ans >&2 || ERROR_CHECK "TEST1"
 
-echo OK >&2
+echo "$0" OK >&2
 rm -f $tmp-*
