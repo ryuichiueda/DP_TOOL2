@@ -6,9 +6,16 @@
 #include <thread>
 using namespace std;
 
+void usage(void){
+	cerr << "\tvalue_iteration" << endl;	
+	cerr << "\tusage:\t./value_iteration [-p <n>] <state trans file>" << endl;	
+	cerr << "\tdate:\tMon Aug 11 12:31:24 JST 2014" << endl;	
+	cerr << "\twritten by Ryuichi Ueda" << endl;
+	exit(1);
+}
+
 bool parseHeader(string &line);
 bool parseStateTrans(string &line);
-void usage(void);
 void die(string);
 bool tokenizer(string &line,vector<string> &words);
 
@@ -133,12 +140,6 @@ bool parseStateTrans(string &line){
 	}
 
 	return true;
-}
-
-void usage(void){
-	cerr << "\tvalue_iteration" << endl;	
-	cerr << "\tdate: Mon Aug 11 12:31:24 JST 2014" << endl;	
-	cerr << "\twritten by: Ryuichi Ueda" << endl;
 }
 
 void die(string reason){
