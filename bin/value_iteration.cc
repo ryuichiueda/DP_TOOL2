@@ -22,6 +22,7 @@ bool tokenizer(string &line,vector<string> &words);
 StateTrans g_state_trans;
 
 void worker(int start_pos) {
+	//no need of exclusive control due to the property of value functions
 	g_state_trans.valueIteration(start_pos);
 }
 
