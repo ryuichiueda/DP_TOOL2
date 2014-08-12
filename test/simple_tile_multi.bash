@@ -11,7 +11,7 @@ ERROR_CHECK(){
 #TEST1#####################################
 # test with the simple_tile sample
 
-../samples/simple_tile/execute.bash > $tmp-output
+../samples/simple_tile/execute_multi.bash > $tmp-output
 
 cat << FIN > $tmp-ans
 0 4000

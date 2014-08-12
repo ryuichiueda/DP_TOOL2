@@ -11,6 +11,7 @@ ERROR_CHECK(){
 
 cd $(dirname $0) || echo "FATAL ERROR: Directory error" >&2
 ./simple_tile.bash  ; ERROR_CHECK
+./simple_tile_multi.bash  ; ERROR_CHECK
 
 echo "$0" OK >&2
 rm -f $tmp-*

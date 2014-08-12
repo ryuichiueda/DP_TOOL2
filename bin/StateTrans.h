@@ -26,8 +26,9 @@ public:
 	bool setStateTrans(unsigned long s,int a,unsigned long s_to,double p,unsigned long cost);
 	bool setValue(unsigned long s,unsigned long v);
 
-	bool valueIteration(void);
+	bool valueIteration(unsigned long start_pos);
 
+	void printAllValues(void);
 };
 
 #endif

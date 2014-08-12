@@ -63,11 +63,12 @@ bool StateTrans::setStateTrans(unsigned long s,int a,unsigned long s_to,double p
 				cost,m_actions.size());
 }
 
-bool StateTrans::valueIteration(void)
+bool StateTrans::valueIteration(unsigned long start_num)
 {
-	for(unsigned long i=0;i<m_state_num;i++){
-		unsigned long v = m_states.at(i).valueIteration(m_states);
-		cout << i << " " << v << endl;
+	for(unsigned long i=start_num;i<m_state_num+start_num;i++){
+		unsigned long index = (i + m_state_num)%m_state_num;
+		unsigned long v = m_states.at(index).valueIteration(m_states);
+		m_states.at(index).setValue(v);
 	}
 	return true;
 }
@@ -77,4 +78,11 @@ bool StateTrans::setValue(unsigned long s,unsigned long v)
 	m_states.at(s).setValue(v);
 	
 	return true;
+}
+
+void StateTrans::printAllValues(void)
+{
+	for(unsigned long i=0;i<m_state_num;i++){
+		cout << i << " " << m_states.at(i).getValue() << endl;
+	}
 }

@@ -3,6 +3,7 @@
 #include <sstream>
 #include <vector>
 #include "StateTrans.h"
+#include <thread>
 using namespace std;
 
 bool parseHeader(string &line);
@@ -13,12 +14,27 @@ bool tokenizer(string &line,vector<string> &words);
 
 StateTrans g_state_trans;
 
+void worker(int start_pos) {
+	g_state_trans.valueIteration(start_pos);
+}
+
+
 int main(int argc, char const* argv[])
 {
+	int worker_num = 1;
+	int filename_pos = 1;
+
 	if(argc < 2)
 		usage();
+	else if(argc == 4){
+		filename_pos = 3;
+		worker_num = atoi(argv[2]);
 
-	ifstream ifs_state_trans(argv[1]);
+		if(worker_num <= 0)
+			die("Invalid Thread Num");
+	}
+
+	ifstream ifs_state_trans(argv[filename_pos]);
 	string buf;
 
 	//parse of header in state transition file
@@ -36,6 +52,8 @@ int main(int argc, char const* argv[])
 			break;
 	}
 
+	ifs_state_trans.close();
+
 	//read of state values
 	while(! cin.eof()){
 		unsigned long s,v;
@@ -43,9 +61,23 @@ int main(int argc, char const* argv[])
 		g_state_trans.setValue(s,v);
 	}
 
-	g_state_trans.valueIteration();
-	
-	return 0;
+	if(worker_num == 1){
+		g_state_trans.valueIteration(0);
+	}
+
+	vector<thread> th;
+	for(int i=0;i<worker_num;i++){
+		unsigned long start_pos = (unsigned long)
+			(double(g_state_trans.getStateNum())/worker_num*i);
+		th.push_back(thread(worker,start_pos));
+	}
+
+	for(int i=0;i<worker_num;i++)
+		th[i].join();
+
+	g_state_trans.printAllValues();
+
+	exit(0);
 }
 
 bool parseHeader(string &line){
