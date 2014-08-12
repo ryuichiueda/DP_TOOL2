@@ -12,19 +12,19 @@ class StateTrans{
 private:
 	int m_state_num;
 	vector<string> m_actions;
-	int m_resolution;
 	vector<State> m_states;
+
+	const unsigned long m_value_limit = 70368744177664;//2^46
 public:
 	StateTrans();
 	bool setStateNum(const string &str);
-	int getStateNum(void);
+	unsigned long getStateNum(void);
 	bool setAction(const string &action);
-	bool setResolution(const string &word);
 	void status(void);
-	State *getState(int num);
+	State *getState(unsigned long index);
 	unsigned int getActionIndex(string &line);
-	bool setStateTrans(int s,int a,int s_to,double p,int cost);
-	bool setValue(int s,int v);
+	bool setStateTrans(unsigned long s,int a,unsigned long s_to,double p,unsigned long cost);
+	bool setValue(unsigned long s,unsigned long v);
 
 	bool valueIteration(void);
 

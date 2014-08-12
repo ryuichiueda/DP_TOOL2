@@ -4,7 +4,7 @@ using namespace std;
 
 State::State(){}
 
-bool State::setStateTrans(int a,int s_to,int p,int c,int action_num)
+bool State::setStateTrans(int a,unsigned long s_to,unsigned int p,unsigned long c,int action_num)
 {
 	if(m_actions.size() == 0){
 		Action act;
@@ -12,41 +12,38 @@ bool State::setStateTrans(int a,int s_to,int p,int c,int action_num)
 			m_actions.push_back(act);
 	}
 
-	Transition t{s_to,p,c};
+	Transition t{p,s_to,c};
 	m_actions.at(a).trans.push_back(t);
 	return true;
 }
 
-int State::valueIteration(vector<State> &other_state, int resolution)
+unsigned long State::valueIteration(vector<State> &other_state)
 {
-	int v_min = 999999999;
+	unsigned long v_min = m_value;
 	for(unsigned int a=0;a<m_actions.size();a++){
 		if(m_actions.at(a).trans.size() == 0)
 			continue;
 
-		int v = valueIterationAction(a,other_state,resolution);
+		unsigned long v = valueIterationAction(a,other_state);
 		if(v_min > v)
 			v_min = v;
 	}
-	if(v_min < m_value)
-		return v_min;
-	else
-		return m_value;
+	return v_min;
 }
 
-int State::valueIterationAction(int a,vector<State> &other_state, int resolution)
+unsigned long State::valueIterationAction(int a,vector<State> &other_state)
 {
 	auto *trans = &m_actions.at(a).trans;
 
-	int v = 0;
+	unsigned long v = 0;
 	for(auto i=trans->begin();i<trans->end();i++){
-		int tmp = other_state.at(i->posterior_state).getValue() + (i->cost)*resolution;
-		v += (tmp * i->probability) / resolution;
+		unsigned long tmp = other_state.at(i->posterior_state).getValue() + (i->cost);
+		v += tmp * i->probability;
 	}
-	return v;
+	return v >> 16;
 }
 
-void State::setValue(int v)
+void State::setValue(unsigned long v)
 {
 	m_value = v;
 }

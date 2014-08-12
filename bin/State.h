@@ -11,21 +11,22 @@ using namespace std;
 class State{
 private:
 	struct Transition{
-		int posterior_state, probability, cost;
+		unsigned int probability;
+		unsigned long posterior_state, cost;
 	};
 	struct Action{
 		vector<Transition> trans;
 	};
 
 	vector<Action> m_actions;
-	int m_value;
+	unsigned long m_value;
 public:
 	State();
-	bool setStateTrans(int a,int s_to,int p,int c,int action_num);
-	int valueIteration(vector<State> &other_state, int resolution);
-	int valueIterationAction(int a, vector<State> &other_state,int resolution);
-	void setValue(int v);
-	int getValue(void){return m_value;}
+	bool setStateTrans(int a,unsigned long s_to,unsigned int p,unsigned long c,int action_num);
+	unsigned long valueIteration(vector<State> &other_state);
+	unsigned long valueIterationAction(int a, vector<State> &other_state);
+	void setValue(unsigned long v);
+	unsigned long getValue(void){return m_value;}
 };
 
 #endif

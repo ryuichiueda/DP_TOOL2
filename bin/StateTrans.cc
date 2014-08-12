@@ -1,4 +1,5 @@
 #include "StateTrans.h"
+#include <climits>
 using namespace std;
 
 StateTrans::StateTrans(){}
@@ -15,12 +16,13 @@ bool StateTrans::setStateNum(const string &str)
 	m_states.reserve(m_state_num);
 	for(int i=0;i<m_state_num;i++){
 		State s;
+		s.setValue(m_value_limit);
 		m_states.push_back(s);
 	}
 	return true;
 }
 
-int StateTrans::getStateNum(void)
+unsigned long StateTrans::getStateNum(void)
 {
 	return m_state_num;
 }
@@ -31,12 +33,6 @@ bool StateTrans::setAction(const string &action)
 	return true;
 }
 
-bool StateTrans::setResolution(const string &word)
-{
-	m_resolution = atoi(word.c_str());
-	return (m_resolution > 0);
-}
-
 void StateTrans::status(void)
 {
 	cerr << "statenum: " << m_state_num << endl;
@@ -45,12 +41,11 @@ void StateTrans::status(void)
 		cerr << *i << " ";
 	}
 	cerr << endl;
-	cerr << "resolution: " << m_resolution << endl;
 }
 
-State* StateTrans::getState(int num)
+State* StateTrans::getState(unsigned long index)
 {
-	return &m_states.at(num);
+	return &m_states.at(index);
 }
 
 unsigned int StateTrans::getActionIndex(string &line)
@@ -62,24 +57,24 @@ unsigned int StateTrans::getActionIndex(string &line)
 	return -1;
 }
 
-bool StateTrans::setStateTrans(int s,int a,int s_to,double prob,int cost)
+bool StateTrans::setStateTrans(unsigned long s,int a,unsigned long s_to,double prob,unsigned long cost)
 {
-	return m_states[s].setStateTrans(a,s_to,int(prob*m_resolution),
+	return m_states[s].setStateTrans(a,s_to, (unsigned int)(prob*65536),
 				cost,m_actions.size());
 }
 
 bool StateTrans::valueIteration(void)
 {
-	for(int i=0;i<m_state_num;i++){
-		int v = m_states.at(i).valueIteration(m_states,m_resolution);
-		cout << i << " " << v/m_resolution << endl;
+	for(unsigned long i=0;i<m_state_num;i++){
+		unsigned long v = m_states.at(i).valueIteration(m_states);
+		cout << i << " " << v << endl;
 	}
 	return true;
 }
 
-bool StateTrans::setValue(int s,int v)
+bool StateTrans::setValue(unsigned long s,unsigned long v)
 {
-	m_states.at(s).setValue(v * m_resolution);
+	m_states.at(s).setValue(v);
 	
 	return true;
 }

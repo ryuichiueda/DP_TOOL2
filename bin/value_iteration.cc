@@ -38,7 +38,7 @@ int main(int argc, char const* argv[])
 
 	//read of state values
 	while(! cin.eof()){
-		int s,v;
+		unsigned long s,v;
 		cin >> s >> v;
 		g_state_trans.setValue(s,v);
 	}
@@ -66,11 +66,6 @@ bool parseHeader(string &line){
 		for(auto i=++words.begin();i<words.end();i++){
 			g_state_trans.setAction(*i);
 		}	
-	}
-	else if(words.at(0) == "resolution"){
-		if(! g_state_trans.setResolution(words.at(1))){
-			die("Invalid Reslution");
-		}
 	}
 
 	return true;
