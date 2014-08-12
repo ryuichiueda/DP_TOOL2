@@ -71,6 +71,8 @@ int main(int argc, char const* argv[])
 
 	if(worker_num == 1){
 		g_state_trans.valueIteration(0);
+		g_state_trans.printAllValues();
+		exit(0);
 	}
 
 	vector<thread> th;
