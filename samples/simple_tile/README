@@ -62,9 +62,61 @@ Though we write it by hand
 for this sample, it should be automatically
 obtained by a program written by a user.
 
+There are some operating suggestions.
+In the commands, there is no check codes
+for overflow.
+
+	1: the values and costs are handled with
+	unsigned long type in the commands.
+	Therefore, the values should be more than zero.
+	The values then should be multiplied
+	by some numbers (100 or 1000, for example)
+	when the precision after the decimal point is required.
+
+	In this example, costs and the initial values
+	in `value.0' are multiplied by 1000.
+
+	2: Probabilities can be written with decimal points.
+	They are multiplied by 2^16 and cast to unsigned int
+	in the program.
+
+	3: the initial values should give values of final states.
+
 To use value_iteration command, 
 the state_trans file is read from
 standard input of value_iteration command.
 
-$ cat values.0 | value_iteration ../../bin/value_iteration > values.1
+	$ cat values.0 | value_iteration ../../bin/value_iteration > values.1
+	$ cat values.1
+	0 70368744177664
+	1 70368744177664
+	2 70368744177664
+	3 70368744177664
+	4 70368744177664
+	5 1000
+	6 70368744177664
+	7 1000
+	8 0
 
+To obtain the answer, value_iteration command should be repeated.
+
+	$ cat values.1 | value_iteration ../../bin/value_iteration > values.2
+	$ cat values.2
+	0 70368744177664
+	1 70368744177664
+	2 2000
+	3 70368744177664
+	4 2000
+	5 1000
+	6 2000
+	7 1000
+	8 0
+
+	$ cat values.2 | value_iteration ../../bin/value_iteration > values.3
+	...
+	
+We can confirm the convergence with diff(1).
+
+$ diff values.4 values.5 
+$ echo $?
+0
