@@ -10,7 +10,7 @@ using namespace std;
 
 class StateTrans{
 private:
-	int m_state_num;
+	unsigned long m_state_num;
 	vector<string> m_actions;
 	vector<State> m_states;
 

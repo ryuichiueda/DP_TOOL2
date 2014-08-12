@@ -14,7 +14,7 @@ bool StateTrans::setStateNum(const string &str)
 		return false;
 
 	m_states.reserve(m_state_num);
-	for(int i=0;i<m_state_num;i++){
+	for(unsigned long i=0;i<m_state_num;i++){
 		State s;
 		s.setValue(m_value_limit);
 		m_states.push_back(s);
