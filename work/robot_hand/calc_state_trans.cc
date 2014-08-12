@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include "Robot.h"
+#include "Arm.h"
+#include "Hand.h"
 using namespace std;
 
 int main(int argc, char const* argv[])

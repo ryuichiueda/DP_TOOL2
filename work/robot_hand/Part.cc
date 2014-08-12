@@ -1,6 +1,11 @@
 #include "Robot.h"
 using namespace std;
 
+Part::Part(){m_angle = 0.0;}
+Part::~Part(){}
+
+double Part::getAngle(void){ return m_angle; }
+
 /*
 Arm::Arm(double length,double angle_min, double angle_max) : Part()
 {
@@ -45,7 +50,6 @@ Coordinate Hand::getEndPosition(Coordinate prev_pos,double prev_angle)
 	//Hand does not have the definition of end point.
 	return prev_pos;
 }
-*/
 
 Robot::Robot(){}
 Robot::~Robot(){}
@@ -75,3 +79,4 @@ double Robot::getEndAngle(void)
 	return ang;
 }
 
+*/
