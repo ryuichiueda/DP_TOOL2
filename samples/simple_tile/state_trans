@@ -1,7 +1,6 @@
 %%metadata%%
 statenum 9
 actions left right up down
-resolution 10000
 
 %%state transitions%%
 state 0 action right
