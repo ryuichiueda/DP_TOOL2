@@ -11,20 +11,21 @@ using namespace std;
 class Arm : public Part{
 private:
 	string m_name;
-	double m_length;
-	double m_angle_max;
-	double m_angle_min;
+	int m_length;
+	int m_angle_max;
+	int m_angle_min;
 
-	vector<double> m_discrete_states;
-	double m_discrete_width;
 public:
-	Arm(string name, double length,double angle_min, 
-		double angle_max,double discrete_width);
+	Arm(string name, int length, int angle_min, int angle_max);
 	virtual ~Arm();
-	Coordinate getEndPosition(Coordinate prev_pos,double prev_angle);
-	virtual bool setAngle(double a);
+	Coordinate getEndPosition(Coordinate prev_pos,int prev_angle);
+	virtual bool setAngle(int a);
+	int indexToAngle(int i);
+	virtual int getStateNum(void);
 
 	double stateToAngleDeg(int index);
+
+	bool inRange(int index);
 };
 
 #endif

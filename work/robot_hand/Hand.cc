@@ -1,7 +1,7 @@
 #include "Hand.h"
 using namespace std;
 
-Hand::Hand(double base_length,double side_length) : Part()
+Hand::Hand(int base_length,int side_length) : Part()
 {
 	m_base_length = base_length;
 	m_side_length = side_length;
@@ -9,44 +9,32 @@ Hand::Hand(double base_length,double side_length) : Part()
 
 Hand::~Hand(){}
 
-bool Hand::setAngle(double a)
-{
+bool Hand::setAngle(int a)
+{//hand has no joint so nothing is set
 	return false;
 }
 
-Coordinate Hand::getEndPosition(Coordinate prev_pos,double prev_angle)
+Coordinate Hand::getEndPosition(Coordinate prev_pos,int prev_angle)
 {
 	//Hand does not have the definition of end point.
 	return prev_pos;
 }
 
-/*
-Robot::Robot(){}
-Robot::~Robot(){}
-
-Part *Robot::getPart(int index){return m_arms.at(index);}
-void Robot::setPart(Part *a){m_arms.push_back(a);}
-
-Coordinate Robot::getEndPosition(void)
+int Hand::getStateNum(void)
 {
-	Coordinate c{0.0,0.0};
-	double ang = 0.0;
-
-	for(auto i=m_arms.begin();i<m_arms.end();i++){
-		c = (*i)->getEndPosition(c,ang);
-		ang += (*i)->getAngle();
-	}
-
-	return c;
+	return 1;
 }
 
-double Robot::getEndAngle(void)
+bool Hand::isInside(double relative_x, double relative_y)
 {
-	double ang = 0.0;
-	for(auto i=m_arms.begin();i<m_arms.end();i++){
-		ang += (*i)->getAngle();
-	}
-	return ang;
-}
+	if(relative_x <= 0.0)
+		return false;
 
-*/
+	if(relative_x > m_side_length)
+		return false;
+	
+	if(relative_y > m_base_length/2)
+		return false;
+
+	return true;
+}

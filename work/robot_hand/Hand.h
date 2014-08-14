@@ -17,13 +17,16 @@ class Hand : public Part{
               |-----
 */
 private:
-	double m_base_length;
-	double m_side_length;
+	int m_base_length;
+	int m_side_length;
 public:
-	Hand(double base_length,double side_length);
+	Hand(int base_length,int side_length);
 	virtual ~Hand();
-	Coordinate getEndPosition(Coordinate prev_pos,double prev_angle);
-	virtual bool setAngle(double a);
+	Coordinate getEndPosition(Coordinate prev_pos,int prev_angle);
+	virtual bool setAngle(int a);
+	virtual int getStateNum(void);
+
+	bool isInside(double relative_x, double relative_y);
 };
 
 #endif

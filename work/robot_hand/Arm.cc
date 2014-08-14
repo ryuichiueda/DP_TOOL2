@@ -1,31 +1,30 @@
 #include "Arm.h"
 using namespace std;
 
-Arm::Arm(string name, double length,double angle_min, double angle_max,double discrete_width) : Part()
+Arm::Arm(string name, int length,int angle_min, int angle_max) : Part()
 {
 	m_name = name;
 	m_length = length;
 	m_angle_max = angle_max;
 	m_angle_min = angle_min;
-	m_discrete_width = discrete_width;
 
-	for(double ang=m_angle_min;ang<m_angle_max;ang+=discrete_width){
+	for(int ang=m_angle_min;ang<=m_angle_max;ang++){
 		m_discrete_states.push_back(ang);
 	}
 }
 
 Arm::~Arm(){}
 
-Coordinate Arm::getEndPosition(Coordinate prev_pos,double prev_angle)
+Coordinate Arm::getEndPosition(Coordinate prev_pos,int prev_angle)
 {
-	double ang = m_angle + prev_angle;	
+	int ang = m_angle + prev_angle;	
 	double x = prev_pos.x + m_length*cos(ang*3.141592/180.0);
 	double y = prev_pos.y + m_length*sin(ang*3.141592/180.0);
 
 	return Coordinate{x,y};
 }
 
-bool Arm::setAngle(double a)
+bool Arm::setAngle(int a)
 {
 	m_angle = a;
 	return true;
@@ -43,4 +42,20 @@ double Arm::stateToAngleDeg(int index)
 		cerr << "\tindex: " <<  index << endl;
 		throw oor;
 	}
+}
+
+int Arm::getStateNum(void)
+{
+	return m_angle_max - m_angle_min + 1;
+}
+
+bool Arm::inRange(int index)
+{
+	int angle = index + m_angle_min;
+	return (angle <= m_angle_max) && (angle >= m_angle_min);
+}
+
+int Arm::indexToAngle(int i)
+{
+	return i + m_angle_min;
 }

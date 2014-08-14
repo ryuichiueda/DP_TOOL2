@@ -1,17 +1,24 @@
 #ifndef _PART_H__
 #define _PART_H__
 
-#include "Coordinate.h"
+#include <vector>
+using namespace std;
+
+struct Coordinate;
 
 class Part{
 protected:
-	double m_angle;
+	int m_angle;
+	vector<double> m_discrete_states;
 public:
 	Part();
 	virtual ~Part();
-	virtual Coordinate getEndPosition(Coordinate prev_pos,double prev_angle) = 0;
-	virtual bool setAngle(double a) = 0;
-	virtual double getAngle(void);
+	virtual Coordinate getEndPosition(Coordinate prev_pos,int prev_angle) = 0;
+	virtual bool setAngle(int a) = 0;
+	virtual int getStateNum(void) = 0;
+	virtual int getAngle(void);
+
+	bool isFinalState(int index,int x, int y, int r);
 };
 
 #endif

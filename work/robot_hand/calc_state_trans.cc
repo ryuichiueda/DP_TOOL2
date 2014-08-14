@@ -19,29 +19,20 @@ public:
 int main(int argc, char const* argv[])
 {
 	//definition of robot
-	Arm arm0("arm0",100.0,-90.0,90.0,1.0);
-	Arm arm1("arm1",100.0,-160.0,160.0,1.0);
-	Hand hand(30.0,30.0);
+	Arm arm0("arm0",100,0,180);
+	Arm arm1("arm1",100,-160,160);
+	Hand hand(30,30);
 
 	Robot robot;
 	robot.setPart(&arm0);
 	robot.setPart(&arm1);
 	robot.setPart(&hand);
 
-/*
-	robot.getPart(0)->setAngle(30.0);
-	robot.getPart(1)->setAngle(-60.0);
-
-	Coordinate c = robot.getEndPosition();
-	cout << c.x << " " << c.y << " " << robot.getEndAngle() << endl;
-*/
 
 	//definition of ball to be gripped
 	Ball ball;
 
-	cout << ball.m_x << endl;
-
-//	arm1.stateToAngleDeg(10000);
-
-	exit(0);
+	robot.writeHeader();
+	robot.writeStateTransition();
+	robot.writeFinalStates(ball.m_x,ball.m_y,ball.m_radius);
 }
