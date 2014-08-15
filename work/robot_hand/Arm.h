@@ -19,13 +19,16 @@ public:
 	Arm(string name, int length, int angle_min, int angle_max);
 	virtual ~Arm();
 	Coordinate getEndPosition(Coordinate prev_pos,int prev_angle);
-	virtual bool setAngle(int a);
+	virtual void setAngle(int a);
 	int indexToAngle(int i);
 	virtual int getStateNum(void);
 
 	double stateToAngleDeg(int index);
 
-	bool inRange(int index);
+	virtual bool inRange(int index);
+
+	virtual bool collisionWithBall(Coordinate prev_pos,int prev_angle,
+					double x,double y,double r);
 };
 
 #endif

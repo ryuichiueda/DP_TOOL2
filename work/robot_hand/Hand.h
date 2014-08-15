@@ -23,10 +23,12 @@ public:
 	Hand(int base_length,int side_length);
 	virtual ~Hand();
 	Coordinate getEndPosition(Coordinate prev_pos,int prev_angle);
-	virtual bool setAngle(int a);
+	virtual void setAngle(int a);
 	virtual int getStateNum(void);
 
 	bool isInside(double relative_x, double relative_y);
+	virtual bool collisionWithBall(Coordinate prev_pos,int prev_angle,
+					double x,double y,double r);
 };
 
 #endif

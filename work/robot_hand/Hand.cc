@@ -9,10 +9,8 @@ Hand::Hand(int base_length,int side_length) : Part()
 
 Hand::~Hand(){}
 
-bool Hand::setAngle(int a)
-{//hand has no joint so nothing is set
-	return false;
-}
+//hand has no joint so nothing is set
+void Hand::setAngle(int a){return;}
 
 Coordinate Hand::getEndPosition(Coordinate prev_pos,int prev_angle)
 {
@@ -37,4 +35,10 @@ bool Hand::isInside(double relative_x, double relative_y)
 		return false;
 
 	return true;
+}
+
+bool Hand::collisionWithBall(Coordinate prev_pos,int prev_angle,
+					double x,double y,double r)
+{
+	return false;
 }

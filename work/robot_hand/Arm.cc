@@ -24,17 +24,15 @@ Coordinate Arm::getEndPosition(Coordinate prev_pos,int prev_angle)
 	return Coordinate{x,y};
 }
 
-bool Arm::setAngle(int a)
+void Arm::setAngle(int a)
 {
 	m_angle = a;
-	return true;
 }
 
 double Arm::stateToAngleDeg(int index)
 {
-	try{
-		return m_discrete_states.at(index);
-	}
+	return m_discrete_states.at(index);
+/*
 	catch (const out_of_range& oor) {
 		cerr << "Out of Range:" << endl;
 		cerr << "\tname: " <<  m_name << endl;
@@ -42,6 +40,7 @@ double Arm::stateToAngleDeg(int index)
 		cerr << "\tindex: " <<  index << endl;
 		throw oor;
 	}
+*/
 }
 
 int Arm::getStateNum(void)
@@ -58,4 +57,10 @@ bool Arm::inRange(int index)
 int Arm::indexToAngle(int i)
 {
 	return i + m_angle_min;
+}
+
+bool Arm::collisionWithBall(Coordinate prev_pos,int prev_angle,
+					double x,double y,double r)
+{
+	return false;
 }

@@ -28,11 +28,10 @@ int main(int argc, char const* argv[])
 	robot.setPart(&arm1);
 	robot.setPart(&hand);
 
-
 	//definition of ball to be gripped
 	Ball ball;
 
 	robot.writeHeader();
-	robot.writeStateTransition();
+	robot.writeStateTransition(ball.m_x,ball.m_y,ball.m_radius);
 	robot.writeFinalStates(ball.m_x,ball.m_y,ball.m_radius);
 }

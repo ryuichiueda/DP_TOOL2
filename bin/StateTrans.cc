@@ -5,13 +5,15 @@
 #include "State.h"
 using namespace std;
 
-StateTrans::StateTrans(){}
+StateTrans::StateTrans()
+{
+	m_converged = true;
+}
+
 StateTrans::~StateTrans(){}
 
 bool StateTrans::setStateNum(const string &str)
 {
-	const unsigned long value_limit = 70368744177664;//2^46
-
 	m_state_num = atoi(str.c_str());
 	if(m_state_num <= 0 or m_states.size() > 0)
 		return false;
@@ -20,7 +22,6 @@ bool StateTrans::setStateNum(const string &str)
 	for(unsigned long i=0;i<m_state_num;i++){
 		State s;
 
-		s.setValue(value_limit);
 		m_states.push_back(s);
 	}
 	return true;
@@ -49,7 +50,7 @@ void StateTrans::status(void)
 
 State* StateTrans::getState(unsigned long index)
 {
-	return &m_states.at(index);
+	return &m_states[index];
 }
 
 unsigned int StateTrans::getActionIndex(string &line)
@@ -71,22 +72,38 @@ bool StateTrans::valueIteration(unsigned long start_num)
 {
 	for(unsigned long i=start_num;i<m_state_num+start_num;i++){
 		unsigned long index = (i + m_state_num)%m_state_num;
-		unsigned long v = m_states.at(index).valueIteration(m_states);
-		m_states.at(index).setValue(v);
+		unsigned long v = m_states[index].valueIteration(m_states);
+		unsigned long prv = m_states[index].getValue();
+
+		if(prv != v)
+			m_converged = false;
+
+		m_states[index].setValue(v);
+
 	}
 	return true;
 }
 
 bool StateTrans::setValue(unsigned long s,unsigned long v)
 {
-	m_states.at(s).setValue(v);
+	m_states[s].setValue(v);
 	return true;
 }
 
-void StateTrans::printAllValues(void)
+void StateTrans::printValues(void)
 {
 	for(unsigned long i=0;i<m_state_num;i++){
-		cout << i << " " << m_states.at(i).getValue() << endl;
+		cout << i << " " << m_states[i].getValue() << endl;
+	}
+}
+
+void StateTrans::printActions(void)
+{
+	ofstream ofs("policy");
+	for(unsigned long i=0;i<m_state_num;i++){
+		int a = m_states[i].getActionIndex();
+		if(a > 0)
+			ofs << i << " " << m_actions[a] << endl;
 	}
 }
 
@@ -131,13 +148,13 @@ bool StateTrans::parseHeader(string &line){
 	if(words.size() < 1)
 		return true;
 
-	if(words.at(0) == "statenum"){
-		if(! setStateNum(words.at(1))){
+	if(words[0] == "statenum"){
+		if(! setStateNum(words[1])){
 			cerr << "Invalid State Number" << endl;
 			return false;
 		}
 	}
-	else if(words.at(0) == "actions"){
+	else if(words[0] == "actions"){
 		for(auto i=++words.begin();i<words.end();i++){
 			setAction(*i);
 		}	
@@ -155,19 +172,19 @@ bool StateTrans::parseStateTrans(string &line)
 
 	static int state_index = -1;
 	static int action_index = -1;
-	if(words.at(0) == "state"){
-		state_index = atoi(words.at(1).c_str());
-		action_index = getActionIndex(words.at(3));
+	if(words[0] == "state"){
+		state_index = atoi(words[1].c_str());
+		action_index = getActionIndex(words[3]);
 
 		if(state_index < 0){
 			cerr << "Invalid State No." << endl;
 			return false;
 		}
 	}
-	else if((words.at(0))[0] == '\t'){
-		int s_after = atoi(words.at(1).c_str());
-		double p = atof(words.at(3).c_str());
-		double c = atof(words.at(5).c_str());
+	else if(words[0][0] == '\t'){
+		int s_after = atoi(words[1].c_str());
+		double p = atof(words[3].c_str());
+		double c = atof(words[5].c_str());
 
 		if(s_after < 0){
 			cerr << "Invalid Posterior State" << endl;

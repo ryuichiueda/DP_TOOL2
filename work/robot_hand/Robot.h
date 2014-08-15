@@ -13,13 +13,14 @@ class Action;
 
 class Robot{
 private:
-	vector<Part*> m_arms;
+	vector<Part*> m_parts;
 	vector<Action> m_actions;
 
 	int getStateNum(void);
 
 	void getEachStateNum(int index,deque<int> *res);
-	void writeStateTransition(int index,deque<int> *s,Action *a);
+	void writeStateTransition(int index,deque<int> *s,Action *a,
+			double bx,double by,double br);
 
 	int getStateIndex(vector<int> *s);
 
@@ -38,8 +39,10 @@ public:
 	string &getActionName(int index);
 
 	void writeHeader(void);
-	void writeStateTransition(void);
+	void writeStateTransition(double bx,double by,double br);
 	void writeFinalStates(double x,double y,double r);
+
+	bool collisionWithBall(double x,double y,double r);
 };
 
 #endif

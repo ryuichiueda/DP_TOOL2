@@ -1,0 +1,16 @@
+CXX = g++
+CXXFLAGS = -Wall -O3 --static -std=c++11
+LDFLAGS = -lm -pthread 
+SRCS = State.o StateTrans.o
+OBJS := $(SRCS:.cc=.o)
+
+all: value_iteration value_to_action
+
+value_iteration: $(OBJS) value_iteration.o
+	$(CXX) -o $@ $(OBJS) value_iteration.o $(LDFLAGS)
+
+value_to_action: $(OBJS) value_to_action.o
+	$(CXX) -o $@ $(OBJS) value_to_action.o $(LDFLAGS)
+
+clean:
+	rm -f $(TARGET) $(OBJS)

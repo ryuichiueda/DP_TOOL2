@@ -23,6 +23,8 @@ private:
 	bool parseHeader(string &line);
 	bool parseStateTrans(string &line);
 	bool tokenizer(string &line,vector<string> &words);
+
+	bool m_converged;
 public:
 	StateTrans();
 	~StateTrans();
@@ -34,7 +36,12 @@ public:
 	//functions for execution
 	bool readStateTransFile(const char *filename);
 	bool valueIteration(unsigned long start_pos);
-	void printAllValues(void);
+
+	//output
+	void printValues(void);
+	void printActions(void);
+
+	bool isConverged(void){return m_converged;}
 };
 
 #endif
