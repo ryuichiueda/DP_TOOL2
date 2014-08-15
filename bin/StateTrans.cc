@@ -1,5 +1,7 @@
 #include "StateTrans.h"
 #include <climits>
+#include <fstream>
+#include <sstream>
 using namespace std;
 
 StateTrans::StateTrans(){}
@@ -76,7 +78,6 @@ bool StateTrans::valueIteration(unsigned long start_num)
 bool StateTrans::setValue(unsigned long s,unsigned long v)
 {
 	m_states.at(s).setValue(v);
-	
 	return true;
 }
 
@@ -85,4 +86,107 @@ void StateTrans::printAllValues(void)
 	for(unsigned long i=0;i<m_state_num;i++){
 		cout << i << " " << m_states.at(i).getValue() << endl;
 	}
+}
+
+bool StateTrans::readStateTransFile(const char *filename)
+{
+	ifstream ifs_state_trans(filename);
+	string buf;
+
+	//parse of header in state transition file
+	while(ifs_state_trans && getline(ifs_state_trans,buf)){
+		if(parseHeader(buf) == false)
+			break;
+	}
+
+	//checking global setting
+	//g_state_trans.status();
+
+	//parse of state transtions in state transition file
+	while(ifs_state_trans && getline(ifs_state_trans,buf)){
+		if(parseStateTrans(buf) == false)
+			break;
+	}
+
+	ifs_state_trans.close();
+
+	//read of state values
+	while(! cin.eof()){
+		unsigned long s,v;
+		cin >> s >> v;
+		setValue(s,v);
+	}
+
+	return true;
+}
+
+bool StateTrans::parseHeader(string &line){
+	if(line == "%%state transitions%%")
+		return false;
+	
+	vector<string> words;
+	tokenizer(line,words);
+	if(words.size() < 1)
+		return true;
+
+	if(words.at(0) == "statenum"){
+		if(! setStateNum(words.at(1))){
+			cerr << "Invalid State Number" << endl;
+			return false;
+		}
+	}
+	else if(words.at(0) == "actions"){
+		for(auto i=++words.begin();i<words.end();i++){
+			setAction(*i);
+		}	
+	}
+
+	return true;
+}
+
+bool StateTrans::parseStateTrans(string &line)
+{
+	vector<string> words;
+	tokenizer(line,words);
+	if(words.size() < 1)
+		return true;
+
+	static int state_index = -1;
+	static int action_index = -1;
+	if(words.at(0) == "state"){
+		state_index = atoi(words.at(1).c_str());
+		action_index = getActionIndex(words.at(3));
+
+		if(state_index < 0){
+			cerr << "Invalid State No." << endl;
+			return false;
+		}
+	}
+	else if((words.at(0))[0] == '\t'){
+		int s_after = atoi(words.at(1).c_str());
+		double p = atof(words.at(3).c_str());
+		double c = atof(words.at(5).c_str());
+
+		if(s_after < 0){
+			cerr << "Invalid Posterior State" << endl;
+			return false;
+		}
+		if(p <= 0.0 || p > 1.0){
+			cerr << "Invalid Probability" << endl;
+			return false;
+		}
+
+		setStateTrans(state_index,action_index,s_after,p,c);
+	}
+
+	return true;
+}
+
+bool StateTrans::tokenizer(string &line,vector<string> &words){
+	string token;
+	stringstream ss(line);
+	while(getline(ss,token,' ')){
+		words.push_back(token);
+	}
+	return true;
 }

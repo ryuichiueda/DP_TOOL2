@@ -15,6 +15,10 @@ private:
 	vector<State> m_states;
 
 	const unsigned long m_value_limit = 70368744177664;//2^46
+
+	bool parseHeader(string &line);
+	bool parseStateTrans(string &line);
+	bool tokenizer(string &line,vector<string> &words);
 public:
 	StateTrans();
 	bool setStateNum(const string &str);
@@ -29,6 +33,8 @@ public:
 	bool valueIteration(unsigned long start_pos);
 
 	void printAllValues(void);
+
+	bool readStateTransFile(const char *filename);
 };
 
 #endif
