@@ -14,27 +14,27 @@ private:
 	vector<string> m_actions;
 	vector<State> m_states;
 
-	const unsigned long m_value_limit = 70368744177664;//2^46
-
+	//functions for initialization
+	bool setStateNum(const string &str);
+	bool setAction(const string &action);
+	bool setValue(unsigned long s,unsigned long v);
+	bool setStateTrans(unsigned long s,int a,unsigned long s_to,double p,unsigned long cost);
+	//functions for file reading
 	bool parseHeader(string &line);
 	bool parseStateTrans(string &line);
 	bool tokenizer(string &line,vector<string> &words);
 public:
 	StateTrans();
-	bool setStateNum(const string &str);
-	unsigned long getStateNum(void);
-	bool setAction(const string &action);
+	~StateTrans();
 	void status(void);
-	State *getState(unsigned long index);
+
 	unsigned int getActionIndex(string &line);
-	bool setStateTrans(unsigned long s,int a,unsigned long s_to,double p,unsigned long cost);
-	bool setValue(unsigned long s,unsigned long v);
-
-	bool valueIteration(unsigned long start_pos);
-
-	void printAllValues(void);
-
+	State *getState(unsigned long index);
+	unsigned long getStateNum(void);
+	//functions for execution
 	bool readStateTransFile(const char *filename);
+	bool valueIteration(unsigned long start_pos);
+	void printAllValues(void);
 };
 
 #endif

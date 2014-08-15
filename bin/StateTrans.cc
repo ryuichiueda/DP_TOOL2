@@ -2,23 +2,25 @@
 #include <climits>
 #include <fstream>
 #include <sstream>
+#include "State.h"
 using namespace std;
 
 StateTrans::StateTrans(){}
+StateTrans::~StateTrans(){}
 
 bool StateTrans::setStateNum(const string &str)
 {
-	m_state_num = atoi(str.c_str());
-	if(m_state_num <= 0)
-		return false;
+	const unsigned long value_limit = 70368744177664;//2^46
 
-	if(m_states.size() > 0)
+	m_state_num = atoi(str.c_str());
+	if(m_state_num <= 0 or m_states.size() > 0)
 		return false;
 
 	m_states.reserve(m_state_num);
 	for(unsigned long i=0;i<m_state_num;i++){
 		State s;
-		s.setValue(m_value_limit);
+
+		s.setValue(value_limit);
 		m_states.push_back(s);
 	}
 	return true;

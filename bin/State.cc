@@ -3,6 +3,7 @@ using namespace std;
 
 
 State::State(){}
+State::~State(){}
 
 bool State::setStateTrans(int a,unsigned long s_to,unsigned int p,unsigned long c,int action_num)
 {

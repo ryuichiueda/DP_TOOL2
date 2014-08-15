@@ -7,7 +7,6 @@
 #include <vector>
 using namespace std;
 
-
 class State{
 private:
 	struct Transition{
@@ -22,6 +21,7 @@ private:
 	unsigned long m_value;
 public:
 	State();
+	~State();
 	bool setStateTrans(int a,unsigned long s_to,unsigned int p,unsigned long c,int action_num);
 	unsigned long valueIteration(vector<State> &other_state);
 	unsigned long valueIterationAction(int a, vector<State> &other_state);

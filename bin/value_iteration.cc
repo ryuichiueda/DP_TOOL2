@@ -1,6 +1,4 @@
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <vector>
 #include "StateTrans.h"
 #include <thread>
@@ -26,12 +24,10 @@ void worker(int start_pos,StateTrans *st) {
 
 int main(int argc, char const* argv[])
 {
-	StateTrans evaluator;
-
+	//handling of options
 	int worker_num = 1;
 	int filename_pos = 1;
-
-	if(argc < 2){
+	if(argc < 2 || argc == 3 || argc > 4){
 		usage();
 	}
 	else if(argc == 4){
@@ -42,30 +38,26 @@ int main(int argc, char const* argv[])
 			die("Invalid Thread Num");
 	}
 
-	if(! evaluator.readStateTransFile(argv[filename_pos]))
+	StateTrans st;
+	//reading data from file
+	if(! st.readStateTransFile(argv[filename_pos]))
 		die("state_trans file error");
 
-	if(worker_num == 1){
-		evaluator.valueIteration(0);
-		evaluator.printAllValues();
-		exit(0);
-	}
-
+	//execution with n threads
 	vector<thread> th;
-	for(int i=0;i<worker_num;i++){
+	for(int n=0;n<worker_num;n++){
 		unsigned long start_pos = (unsigned long)
-			(double(evaluator.getStateNum())/worker_num*i);
+			(double(st.getStateNum())/worker_num*n);
 
-		th.push_back(thread(worker,start_pos,&evaluator));
+		th.push_back(thread(worker,start_pos,&st));
 	}
 
-	for(int i=0;i<worker_num;i++){
-		th[i].join();
+	//waiting
+	for(int n=0;n<worker_num;n++){
+		th[n].join();
 	}
 
-	evaluator.printAllValues();
+	st.printAllValues();
 
 	exit(0);
 }
-
-
