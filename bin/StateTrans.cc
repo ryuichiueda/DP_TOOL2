@@ -102,7 +102,7 @@ void StateTrans::printActions(void)
 	ofstream ofs("policy");
 	for(unsigned long i=0;i<m_state_num;i++){
 		int a = m_states[i].getActionIndex();
-		if(a > 0)
+		if(a >= 0)
 			ofs << i << " " << m_actions[a] << endl;
 	}
 }
