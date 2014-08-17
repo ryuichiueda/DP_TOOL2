@@ -25,6 +25,10 @@ private:
 	int getStateIndex(vector<int> *s);
 
 	bool isFinalState(int index,double x,double y,double r);
+
+	vector<int> m_policy;
+
+	bool oneStepMotion(void);
 public:
 
 	Robot();
@@ -36,13 +40,19 @@ public:
 	int getEndAngle(void);
 
 	//bool stateTrans(vector<int> *s,int a,vector<int> *ps);
-	string &getActionName(int index);
+	//string &getActionName(int index);
+	int getActionIndex(string &name);
 
 	void writeHeader(void);
 	void writeStateTransition(double bx,double by,double br);
 	void writeFinalStates(double x,double y,double r);
 
 	bool collisionWithBall(double x,double y,double r);
+
+	bool readPolicy(void);
+
+	//functions for simulation
+	bool doMotion(void);
 };
 
 #endif

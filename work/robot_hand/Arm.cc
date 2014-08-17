@@ -11,6 +11,9 @@ Arm::Arm(string name, int length,int angle_min, int angle_max) : Part()
 	for(int ang=m_angle_min;ang<=m_angle_max;ang++){
 		m_discrete_states.push_back(ang);
 	}
+
+	m_discrete_state = 0;
+	m_angle = m_angle_min;
 }
 
 Arm::~Arm(){}
@@ -27,20 +30,12 @@ Coordinate Arm::getEndPosition(Coordinate prev_pos,int prev_angle)
 void Arm::setAngle(int a)
 {
 	m_angle = a;
+	m_discrete_state = a - m_angle_min;
 }
 
 double Arm::stateToAngleDeg(int index)
 {
 	return m_discrete_states.at(index);
-/*
-	catch (const out_of_range& oor) {
-		cerr << "Out of Range:" << endl;
-		cerr << "\tname: " <<  m_name << endl;
-		cerr << "\tsize: " <<  m_discrete_states.size() << endl;
-		cerr << "\tindex: " <<  index << endl;
-		throw oor;
-	}
-*/
 }
 
 int Arm::getStateNum(void)

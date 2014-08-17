@@ -9,14 +9,16 @@ struct Coordinate;
 class Part{
 protected:
 	int m_angle;
+	int m_discrete_state;
 	vector<double> m_discrete_states;
 public:
 	Part();
 	virtual ~Part();
 	virtual Coordinate getEndPosition(Coordinate prev_pos,int prev_angle) = 0;
 	virtual void setAngle(int a) = 0;
-	virtual int getStateNum(void) = 0;
 	virtual int getAngle(void);
+	virtual int getStateNum(void) = 0;
+	int getState(void){return m_discrete_state;}
 
 	virtual bool collisionWithBall(Coordinate prev_pos,int prev_angle,
 					double x,double y,double r) = 0;

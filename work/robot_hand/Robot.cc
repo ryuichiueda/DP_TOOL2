@@ -59,11 +59,12 @@ bool Robot::stateTrans(vector<int> *s,int a,vector<int> *ps)
 }
 */
 
+/*
 string &Robot::getActionName(int index)
 {
-	cerr << m_actions.size() << endl;
 	return m_actions.at(index).getName();
 }
+*/
 
 int Robot::getStateNum(void)
 {
@@ -122,6 +123,7 @@ void Robot::getEachStateNum(int index,deque<int> *res)
 
 int Robot::getStateIndex(vector<int> *s)
 {
+	//cerr << "getsi:" << m_parts[0]->getStateNum() << endl;
 	int index = 0;
 	for(unsigned int i=0;i<m_parts.size();i++){
 		if(m_parts.at(i)->getStateNum() < 2){
@@ -209,4 +211,104 @@ bool Robot::collisionWithBall(double x,double y,double r)
 		prev_ang += (*i)->getAngle();
 	}
 	return false;
+}
+
+bool Robot::readPolicy(void)
+{
+	ifstream ifs("./policy");
+
+	unsigned int state;
+	string action;
+
+	m_policy.clear();
+
+	while(1){
+		ifs >> state >> action;
+		if(ifs.eof())
+			break;
+
+		if(state == m_policy.size()){
+			int a = getActionIndex(action);
+			if(a < 0){
+				return false;
+			}
+			m_policy.push_back(a);
+		}
+		else if(state > m_policy.size()){
+			while(state != m_policy.size()){
+				m_policy.push_back(-1);//final state
+			}
+			int a = getActionIndex(action);
+			if(a < 0){
+				return false;
+			}
+			m_policy.push_back(a);
+		}
+		else{
+			return false;		
+		}
+	}
+
+	ofstream ofs("./hoge");
+	for(unsigned int i=0;i<m_policy.size();i++){
+		ofs << i << " " << m_policy[i] << endl;
+	}
+
+	return true;
+}
+
+int Robot::getActionIndex(string &name)
+{
+	for(unsigned int i=0;i<m_actions.size();i++){
+		if(m_actions[i].getName() == name){
+			return (int)i;
+		}
+	}
+	return -1;
+}
+
+bool Robot::doMotion(void)
+{
+	while(oneStepMotion()){}
+
+	vector<int> eachstate;
+	for(auto &s : m_parts){
+		eachstate.push_back(s->getState());
+	}	
+	int i = getStateIndex(&eachstate);
+
+	return isFinalState(i,50.0,100.0,5.0);
+}
+
+bool Robot::oneStepMotion(void)
+{
+	vector<int> eachstate;
+	for(auto &s : m_parts){
+		eachstate.push_back(s->getState());
+	}	
+	int i = getStateIndex(&eachstate);
+
+	cout << i;
+	Action *a = NULL;
+	if(m_policy[i] >= 0){
+	//	cout << i << " " << "final" << endl;
+		a = &m_actions.at(m_policy[i]);
+ 		cout << " " << a->getName();
+	}
+	else
+ 		cout << " " << "final";
+
+	for(unsigned int p=0;p<m_parts.size();p++){
+		cout << " " << m_parts[p]->getAngle();
+		if(a != NULL){
+			int angle = m_parts[p]->getAngle() + a->getDelta(p);
+			m_parts[p]->setAngle(angle);
+		}
+	}
+	cout << endl;
+
+	if(a == NULL)
+		return false;
+
+	return true;
 }

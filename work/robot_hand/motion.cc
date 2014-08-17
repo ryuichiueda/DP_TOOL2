@@ -5,6 +5,11 @@
 #include "Hand.h"
 using namespace std;
 
+void die(string reason){
+	cerr << "value_iteration: [ERROR] " << reason << endl;
+	exit(1);
+}
+
 class Ball{
 public: 
 	Ball()
@@ -31,7 +36,14 @@ int main(int argc, char const* argv[])
 	//definition of ball to be gripped
 	Ball ball;
 
-	robot.writeHeader();
-	robot.writeStateTransition(ball.m_x,ball.m_y,ball.m_radius);
-	robot.writeFinalStates(ball.m_x,ball.m_y,ball.m_radius);
+	if(! robot.readPolicy()){
+		die("Policy Format Error");
+	}
+
+	robot.getPart(0)->setAngle(90);
+	robot.getPart(1)->setAngle(0);
+	if(! robot.doMotion()){
+		die("not in final state");
+		exit(1);
+	}
 }

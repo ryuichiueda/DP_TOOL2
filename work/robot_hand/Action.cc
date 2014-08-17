@@ -24,5 +24,8 @@ string &Action::getName(void)
 
 int Action::getDelta(int index)
 {
+	if(index >= (int)m_deltas.size())
+		return 0;
+
 	return m_deltas.at(index);
 }

@@ -31,7 +31,7 @@ bool Hand::isInside(double relative_x, double relative_y)
 	if(relative_x > m_side_length)
 		return false;
 	
-	if(relative_y > m_base_length/2)
+	if(fabs(relative_y) > m_base_length/2)
 		return false;
 
 	return true;
