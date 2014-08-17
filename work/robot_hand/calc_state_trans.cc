@@ -33,7 +33,6 @@ int main(int argc, char const* argv[])
 	robot.setPart(&arm1);
 	robot.setPart(&hand);
 
-
 	robot.writeHeader();
 	robot.writeStateTransition();
 	robot.writeFinalStates();

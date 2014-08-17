@@ -56,7 +56,36 @@ int Arm::indexToAngle(int i)
 
 bool Arm::collisionWithBall(Coordinate prev_pos,int prev_angle,Target *target)
 {
-	return false;
+	Coordinate end_pos = getEndPosition(prev_pos,prev_angle);
+	
+	double dx = prev_pos.x - end_pos.x;
+	double dy = prev_pos.y - end_pos.y;
+
+	double t = ((target->x - end_pos.x)*dx + (target->y - end_pos.y)*dy)/(dx*dx + dy*dy);
+
+	if(t < 0.0 || t > 1.0)
+		return false;
+
+	double a = end_pos.y - prev_pos.x;
+	double b = prev_pos.x - end_pos.x;
+	double c = (end_pos.x - prev_pos.x)*prev_pos.y - (end_pos.y - prev_pos.y)*prev_pos.x;
+
+	double d = fabs(a*target->x + b*target->y + c)/sqrt(a*a + b*b);
+
+	if(d > target->radius)
+		return false;
+
+	double x = target->x - prev_pos.x;
+	double y = target->y - prev_pos.y;
+	if(x*x + y*y > target->radius * target->radius)
+		return false;
+
+	x = target->x - end_pos.x;
+	y = target->y - end_pos.y;
+	if(x*x + y*y > target->radius * target->radius)
+		return false;
+ 
+	return true;
 }
 
 void Arm::draw(int size,Pixel *img[],double mag,int cx,int cy,Coordinate &pos,double ang)
