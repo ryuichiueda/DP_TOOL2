@@ -18,6 +18,28 @@ Coordinate Hand::getEndPosition(Coordinate prev_pos,int prev_angle)
 	return prev_pos;
 }
 
+vector<Coordinate> Hand::getEndPositions(Coordinate prev_pos,int prev_angle)
+{
+	vector<Coordinate> ans,local_pos;
+
+	local_pos.push_back(Coordinate{(double)m_side_length,(double)(m_base_length/2)});
+	local_pos.push_back(Coordinate{0.0,(double)(m_base_length/2)});
+	local_pos.push_back(Coordinate{0.0,(double)(-m_base_length/2)});
+	local_pos.push_back(Coordinate{(double)m_side_length,(double)(-m_base_length/2)});
+
+	double c = cos(prev_angle*3.141592/180.0);	
+	double s = sin(prev_angle*3.141592/180.0);	
+
+	for(auto p : local_pos){
+		double x = prev_pos.x + p.x*c - p.y*s;
+		double y = prev_pos.y + p.x*s + p.y*c;
+
+		ans.push_back(Coordinate{x,y});
+	}
+
+	return ans;
+}
+
 int Hand::getStateNum(void)
 {
 	return 1;
@@ -37,8 +59,35 @@ bool Hand::isInside(double relative_x, double relative_y)
 	return true;
 }
 
-bool Hand::collisionWithBall(Coordinate prev_pos,int prev_angle,
-					double x,double y,double r)
+bool Hand::collisionWithBall(Coordinate prev_pos,int prev_angle,Target *target)
 {
 	return false;
+}
+
+void Hand::draw(int size,Pixel *img[],double mag,int cx,int cy,Coordinate &pos,double ang)
+{
+	vector<Coordinate> end_poss = getEndPositions(pos,ang);
+
+	for(unsigned int i=0;i<end_poss.size()-1;i++){
+		Coordinate pos_a = end_poss[i];
+		Coordinate pos_b = end_poss[i+1];
+
+		double start_x = (double)cx + pos_a.x*mag;
+		double start_y = (double)cy + pos_a.y*mag;
+		double end_x = (double)cx + pos_b.x*mag;
+		double end_y = (double)cy + pos_b.y*mag;
+	
+		for(int i=0;i<=size;i++){
+			int x = int(start_x + (end_x - start_x)*(1.0 - ((double)i)/size));
+			int y = int(start_y + (end_y - start_y)*(1.0 - ((double)i)/size));
+	
+			if(x < 0 || x >= size)
+				continue;
+			if(y < 0 || y >= size)
+				continue;
+	
+			img[x][y] = {0,0,0};
+		}
+
+	}
 }

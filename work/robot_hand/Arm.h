@@ -5,7 +5,7 @@
 #include <vector>
 #include <cmath>
 #include "Part.h"
-#include "Coordinate.h"
+#include "Structs.h"
 using namespace std;
 
 class Arm : public Part{
@@ -27,8 +27,9 @@ public:
 
 	virtual bool inRange(int index);
 
-	virtual bool collisionWithBall(Coordinate prev_pos,int prev_angle,
-					double x,double y,double r);
+	virtual bool collisionWithBall(Coordinate prev_pos,int prev_angle,Target *target);
+
+	virtual void draw(int size,Pixel *img[],double mag,int cx,int cy,Coordinate &pos,double ang);
 };
 
 #endif

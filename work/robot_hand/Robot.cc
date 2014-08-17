@@ -3,9 +3,11 @@
 #include "Arm.h"
 #include "Hand.h"
 #include <fstream>
+#include <sstream>
+#include <iomanip>
 using namespace std;
 
-Robot::Robot()
+Robot::Robot(Target *target)
 {
 	//set of actions
 	vector<int> rr{-1,-1}, rn{-1,0}, rl{-1,1},
@@ -19,6 +21,8 @@ Robot::Robot()
 	m_actions.push_back(Action("lr",&lr));
 	m_actions.push_back(Action("ln",&ln));
 	m_actions.push_back(Action("ll",&ll));
+
+	m_target = target;
 }
 Robot::~Robot(){}
 
@@ -87,7 +91,7 @@ void Robot::writeHeader(void)
 	cout << endl;
 }
 
-void Robot::writeStateTransition(double bx,double by,double br)
+void Robot::writeStateTransition(void)
 {
 	cout << "%%state transitions%%" << endl;
 	for(int i=0;i<getStateNum();i++){
@@ -98,12 +102,12 @@ void Robot::writeStateTransition(double bx,double by,double br)
 		p->setAngle(p->indexToAngle(s[0]));
 		p = (Arm *)m_parts.at(1);
 		p->setAngle(p->indexToAngle(s[1]));
-		if(collisionWithBall(bx,by,br))
+		if(collisionWithBall())
 				return;
 
 		for(auto a=m_actions.begin();a<m_actions.end();a++){
 			//state transition
-			writeStateTransition(i,&s,&(*a),bx,by,br);
+			writeStateTransition(i,&s,&(*a));
 		}
 	}
 }
@@ -123,7 +127,6 @@ void Robot::getEachStateNum(int index,deque<int> *res)
 
 int Robot::getStateIndex(vector<int> *s)
 {
-	//cerr << "getsi:" << m_parts[0]->getStateNum() << endl;
 	int index = 0;
 	for(unsigned int i=0;i<m_parts.size();i++){
 		if(m_parts.at(i)->getStateNum() < 2){
@@ -136,8 +139,7 @@ int Robot::getStateIndex(vector<int> *s)
 	return index;
 }
 
-void Robot::writeStateTransition(int index,deque<int> *s,Action *a,
-	double bx,double by,double br)
+void Robot::writeStateTransition(int index,deque<int> *s,Action *a)
 {
 	vector<int> posterior_state;
 	for(unsigned int i=0;i<s->size();i++){
@@ -150,7 +152,7 @@ void Robot::writeStateTransition(int index,deque<int> *s,Action *a,
 
 		posterior_state.push_back(ps);
 	}
-	if(collisionWithBall(bx,by,br))
+	if(collisionWithBall())
 			return;
 
 
@@ -160,20 +162,20 @@ void Robot::writeStateTransition(int index,deque<int> *s,Action *a,
 	cout << "\tstate " << ps << " prob. 1 cost 1000" << endl;
 }
 
-void Robot::writeFinalStates(double x,double y,double r)
+void Robot::writeFinalStates(void)
 {
 	ofstream ofs("./values.0");
 	for(int i=0;i<getStateNum();i++){
-		if(collisionWithBall(x,y,r))
+		if(collisionWithBall())
 			continue;
-		if(! isFinalState(i,x,y,r))
+		if(! isFinalState(i))
 			continue;
 
 		ofs << i << " " << 0 << endl;
 	}
 }
 
-bool Robot::isFinalState(int index,double x,double y,double r)
+bool Robot::isFinalState(int index)
 {
 	//hard coding 
 	//it should be improved
@@ -187,8 +189,8 @@ bool Robot::isFinalState(int index,double x,double y,double r)
 	Coordinate pos = getEndPosition();
 	double dir = getEndAngle()/180.0*3.141592;
 
-	double relative_x = x - pos.x;
-	double relative_y = y - pos.y;
+	double relative_x = m_target->x - pos.x;
+	double relative_y = m_target->y - pos.y;
 
 	double len = sqrt(relative_x * relative_x + relative_y * relative_y);
 	double phi = atan2(relative_y, relative_x) - dir;
@@ -199,12 +201,12 @@ bool Robot::isFinalState(int index,double x,double y,double r)
 	return ((Hand *)m_parts.at(2))->isInside(relative_x2,relative_y2);
 }
 
-bool Robot::collisionWithBall(double x,double y,double r)
+bool Robot::collisionWithBall(void)
 {
 	Coordinate prev_pos{0.0,0.0};
 	double prev_ang{0.0};
 	for(auto i=m_parts.begin();i!=m_parts.end();i++){
-		if((*i)->collisionWithBall(prev_pos,prev_ang,x,y,r))
+		if((*i)->collisionWithBall(prev_pos,prev_ang,m_target))
 			return true;
 
 		prev_pos = (*i)->getEndPosition(prev_pos,prev_ang);
@@ -277,7 +279,8 @@ bool Robot::doMotion(void)
 	}	
 	int i = getStateIndex(&eachstate);
 
-	return isFinalState(i,50.0,100.0,5.0);
+	draw(i);
+	return isFinalState(i);
 }
 
 bool Robot::oneStepMotion(void)
@@ -287,11 +290,11 @@ bool Robot::oneStepMotion(void)
 		eachstate.push_back(s->getState());
 	}	
 	int i = getStateIndex(&eachstate);
+	draw(i);
 
 	cout << i;
 	Action *a = NULL;
 	if(m_policy[i] >= 0){
-	//	cout << i << " " << "final" << endl;
 		a = &m_actions.at(m_policy[i]);
  		cout << " " << a->getName();
 	}
@@ -311,4 +314,57 @@ bool Robot::oneStepMotion(void)
 		return false;
 
 	return true;
+}
+
+void Robot::draw(int state)
+{
+	static int counter = 0;
+
+	stringstream ss;
+	ss << "image/" << setfill('0') << setw(5) << counter << ".ppm";
+	ofstream ofs(ss.str());
+	counter++;
+
+	const double mag = 0.8;
+	const int cx = 200;
+	const int cy = 50;
+	const int size = 400;
+	Pixel *image[size];
+	for(int i=0;i<size;i++)
+		image[i] = new Pixel[size];
+	for(int y=size-1;y>=0;y--){
+		for(int x=0;x<size;x++){
+			image[x][y] = {255,255,255};
+		}
+	}	
+
+	Coordinate pos{0.0,0.0};
+	double ang{0.0};
+	for(auto &s : m_parts){
+		s->draw(size,image,mag,cx,cy,pos,ang);
+		pos = s->getEndPosition(pos,ang);
+		ang += s->getAngle();
+	}	
+
+	//ball
+	for(int i=0;i<360;i++){
+		double r = i*3.141592/180;
+		int x = (int)((m_target->x + m_target->radius*cos(r))*mag) + cx;
+		int y = (int)((m_target->y + m_target->radius*sin(r))*mag) + cy;
+		image[x][y] = {255,0,0};
+	}
+
+	ofs << "P3" << endl;
+	ofs << size << " " << size << endl;
+	ofs << "255" << endl;
+	for(int y=size-1;y>=0;y--){
+		for(int x=0;x<size;x++){
+			ofs << (int)image[x][y].r << " ";
+			ofs << (int)image[x][y].g << " ";
+			ofs << (int)image[x][y].b << endl;
+		}
+	}	
+
+	for(int i=0;i<size;i++)
+		delete [] image[i];
 }

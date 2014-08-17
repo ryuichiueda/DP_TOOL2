@@ -54,8 +54,29 @@ int Arm::indexToAngle(int i)
 	return i + m_angle_min;
 }
 
-bool Arm::collisionWithBall(Coordinate prev_pos,int prev_angle,
-					double x,double y,double r)
+bool Arm::collisionWithBall(Coordinate prev_pos,int prev_angle,Target *target)
 {
 	return false;
+}
+
+void Arm::draw(int size,Pixel *img[],double mag,int cx,int cy,Coordinate &pos,double ang)
+{
+	Coordinate end_pos = getEndPosition(pos,ang);
+	
+	double start_x = (double)cx + pos.x*mag;
+	double start_y = (double)cy + pos.y*mag;
+	double end_x = (double)cx + end_pos.x*mag;
+	double end_y = (double)cy + end_pos.y*mag;
+
+	for(int i=0;i<=size;i++){
+		int x = int(start_x + (end_x - start_x)*(1.0 - ((double)i)/size));
+		int y = int(start_y + (end_y - start_y)*(1.0 - ((double)i)/size));
+
+		if(x < 0 || x >= size)
+			continue;
+		if(y < 0 || y >= size)
+			continue;
+
+		img[x][y] = {0,0,0};
+	}
 }

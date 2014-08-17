@@ -5,4 +5,12 @@ struct Coordinate{
 	double x,y;
 };
 
+struct Pixel{
+	unsigned char r,g,b;
+};
+
+struct Target{
+	double x,y,radius;
+};
+
 #endif

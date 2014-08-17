@@ -5,7 +5,7 @@
 #include <vector>
 #include <cmath>
 #include "Part.h"
-#include "Coordinate.h"
+#include "Structs.h"
 using namespace std;
 
 class Robot;

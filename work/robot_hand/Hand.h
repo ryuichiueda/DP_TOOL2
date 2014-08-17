@@ -5,7 +5,7 @@
 #include <vector>
 #include <cmath>
 #include "Part.h"
-#include "Coordinate.h"
+#include "Structs.h"
 using namespace std;
 
 class Hand : public Part{
@@ -19,6 +19,8 @@ class Hand : public Part{
 private:
 	int m_base_length;
 	int m_side_length;
+
+	vector<Coordinate> getEndPositions(Coordinate prev_pos,int prev_angle);
 public:
 	Hand(int base_length,int side_length);
 	virtual ~Hand();
@@ -27,8 +29,9 @@ public:
 	virtual int getStateNum(void);
 
 	bool isInside(double relative_x, double relative_y);
-	virtual bool collisionWithBall(Coordinate prev_pos,int prev_angle,
-					double x,double y,double r);
+	virtual bool collisionWithBall(Coordinate prev_pos,int prev_angle,Target *target);
+
+	virtual void draw(int size,Pixel *img[],double mag,int cx,int cy,Coordinate &pos,double ang);
 };
 
 #endif

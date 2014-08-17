@@ -5,6 +5,8 @@
 using namespace std;
 
 struct Coordinate;
+struct Pixel;
+struct Target;
 
 class Part{
 protected:
@@ -18,10 +20,12 @@ public:
 	virtual void setAngle(int a) = 0;
 	virtual int getAngle(void);
 	virtual int getStateNum(void) = 0;
+
+	virtual void draw(int size,Pixel *img[],double mag,int cx,int cy,Coordinate &pos,double ang) = 0;
+
 	int getState(void){return m_discrete_state;}
 
-	virtual bool collisionWithBall(Coordinate prev_pos,int prev_angle,
-					double x,double y,double r) = 0;
+	virtual bool collisionWithBall(Coordinate prev_pos,int prev_angle,Target *target) = 0;
 
 	bool isFinalState(int index,int x, int y, int r);
 };

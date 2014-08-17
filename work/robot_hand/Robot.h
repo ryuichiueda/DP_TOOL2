@@ -6,32 +6,37 @@
 #include <deque>
 #include <cmath>
 #include "Part.h"
-#include "Coordinate.h"
+#include "Structs.h"
 using namespace std;
 
 class Action;
+class Target;
 
 class Robot{
 private:
+
 	vector<Part*> m_parts;
 	vector<Action> m_actions;
+
+	Target *m_target;
 
 	int getStateNum(void);
 
 	void getEachStateNum(int index,deque<int> *res);
-	void writeStateTransition(int index,deque<int> *s,Action *a,
-			double bx,double by,double br);
+	void writeStateTransition(int index,deque<int> *s,Action *a);
 
 	int getStateIndex(vector<int> *s);
 
-	bool isFinalState(int index,double x,double y,double r);
+	bool isFinalState(int index);
 
 	vector<int> m_policy;
 
 	bool oneStepMotion(void);
+
+	void draw(int state);
 public:
 
-	Robot();
+	Robot(Target *target);
 	virtual ~Robot();
 
 	Part *getPart(int index);
@@ -44,10 +49,10 @@ public:
 	int getActionIndex(string &name);
 
 	void writeHeader(void);
-	void writeStateTransition(double bx,double by,double br);
-	void writeFinalStates(double x,double y,double r);
+	void writeStateTransition(void);
+	void writeFinalStates(void);
 
-	bool collisionWithBall(double x,double y,double r);
+	bool collisionWithBall(void);
 
 	bool readPolicy(void);
 
