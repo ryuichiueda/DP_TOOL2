@@ -10,7 +10,7 @@
 using namespace std;
 
 class Action;
-class Target;
+struct Target;
 
 class System{
 private:
@@ -35,7 +35,7 @@ private:
 	void draw(int state);
 public:
 
-	System(Target *target);
+	System();
 	virtual ~System();
 
 	Part *getPart(int index);

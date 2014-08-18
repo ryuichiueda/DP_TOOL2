@@ -7,7 +7,7 @@
 #include <iomanip>
 using namespace std;
 
-System::System(Target *target)
+System::System()
 {
 	//set of actions
 	vector<int> rr{-1,-1}, rn{-1,0}, rl{-1,1},
@@ -22,9 +22,20 @@ System::System(Target *target)
 	m_actions.push_back(Action("ln",&ln));
 	m_actions.push_back(Action("ll",&ll));
 
-	m_target = target;
+	//setup of state space and system
+	m_target = new Target{50.0,100.0,5.0};
+
+	m_parts.push_back(new Arm("arm0",100,0,180));
+	m_parts.push_back(new Arm("arm1",100,-160,160));
+	m_parts.push_back(new Hand(30,30));
 }
-System::~System(){}
+System::~System()
+{
+	delete m_target;
+	for(auto &i : m_parts){
+		delete i;
+	}
+}
 
 Part *System::getPart(int index){
 	if(index >= 0 && index < (int)m_parts.size())
@@ -260,10 +271,12 @@ bool System::readPolicy(void)
 		}
 	}
 
+/*
 	ofstream ofs("./hoge");
 	for(unsigned int i=0;i<m_policy.size();i++){
 		ofs << i << " " << m_policy[i] << endl;
 	}
+*/
 
 	return true;
 }
