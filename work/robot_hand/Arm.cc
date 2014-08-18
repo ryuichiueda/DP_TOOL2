@@ -1,4 +1,5 @@
 #include "Arm.h"
+#include "Part.h"
 using namespace std;
 
 Arm::Arm(string name, int length,int angle_min, int angle_max) : Part()
@@ -54,38 +55,47 @@ int Arm::indexToAngle(int i)
 	return i + m_angle_min;
 }
 
-bool Arm::collisionWithBall(Coordinate prev_pos,int prev_angle,Target *target)
+bool Arm::collisionWithTarget(Coordinate prev_pos,int prev_angle,Target *target)
 {
 	Coordinate end_pos = getEndPosition(prev_pos,prev_angle);
+	return collisionWithCircle(prev_pos,end_pos,
+			Coordinate{target->x,target->y},target->radius);
 	
-	double dx = prev_pos.x - end_pos.x;
-	double dy = prev_pos.y - end_pos.y;
+/*
+	double dx = end_pos.x - prev_pos.x;
+	double dy = end_pos.y - prev_pos.y;
 
-	double t = ((target->x - end_pos.x)*dx + (target->y - end_pos.y)*dy)/(dx*dx + dy*dy);
+	double t = ((target->x - prev_pos.x)*dx + (target->y - prev_pos.y)*dy)
+					/(dx*dx + dy*dy);
 
-	if(t < 0.0 || t > 1.0)
+	double cx = dx*t + prev_pos.x;
+	double cy = dy*t + prev_pos.y;
+
+	double d2 = (target->x - cx)*(target->x - cx) + (target->y - cy)*(target->y - cy);
+
+	//if the distance from the center of the ball to the arm is larger than
+	//the radius of the ball, it's OK.
+	if(d2 > target->radius * target->radius){
 		return false;
+	}
+	else if(t >= 0.0 && t <= 1.0){
+		return true;
+	}
 
-	double a = end_pos.y - prev_pos.x;
-	double b = prev_pos.x - end_pos.x;
-	double c = (end_pos.x - prev_pos.x)*prev_pos.y - (end_pos.y - prev_pos.y)*prev_pos.x;
+	//Otherwise: distance from the end points of the arm should be longer than
+	//the radius.
+	double end1_d2 = (target->x - end_pos.x)*(target->x - end_pos.x) +
+				(target->y - end_pos.y)*(target->y - end_pos.y);
+	double end2_d2 = (target->x - prev_pos.x)*(target->x - prev_pos.x) +
+				(target->y - prev_pos.y)*(target->y - prev_pos.y);
 
-	double d = fabs(a*target->x + b*target->y + c)/sqrt(a*a + b*b);
+	if(end1_d2 <= target->radius * target->radius 
+		|| end2_d2 <= target->radius * target->radius){
+		return true;
+	}
 
-	if(d > target->radius)
-		return false;
-
-	double x = target->x - prev_pos.x;
-	double y = target->y - prev_pos.y;
-	if(x*x + y*y > target->radius * target->radius)
-		return false;
-
-	x = target->x - end_pos.x;
-	y = target->y - end_pos.y;
-	if(x*x + y*y > target->radius * target->radius)
-		return false;
- 
-	return true;
+	return false;
+*/
 }
 
 void Arm::draw(int size,Pixel *img[],double mag,int cx,int cy,Coordinate &pos,double ang)

@@ -14,7 +14,6 @@ class Target;
 
 class Robot{
 private:
-
 	vector<Part*> m_parts;
 	vector<Action> m_actions;
 
@@ -52,7 +51,7 @@ public:
 	void writeStateTransition(void);
 	void writeFinalStates(void);
 
-	bool collisionWithBall(void);
+	bool collisionWithTarget(void);
 
 	bool readPolicy(void);
 

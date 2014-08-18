@@ -29,7 +29,7 @@ public:
 	virtual int getStateNum(void);
 
 	bool isInside(double relative_x, double relative_y);
-	virtual bool collisionWithBall(Coordinate prev_pos,int prev_angle,Target *target);
+	virtual bool collisionWithTarget(Coordinate prev_pos,int prev_angle,Target *target);
 
 	virtual void draw(int size,Pixel *img[],double mag,int cx,int cy,Coordinate &pos,double ang);
 };

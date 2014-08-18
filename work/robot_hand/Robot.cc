@@ -102,8 +102,8 @@ void Robot::writeStateTransition(void)
 		p->setAngle(p->indexToAngle(s[0]));
 		p = (Arm *)m_parts.at(1);
 		p->setAngle(p->indexToAngle(s[1]));
-		if(collisionWithBall())
-				return;
+		if(collisionWithTarget())
+				continue;
 
 		for(auto a=m_actions.begin();a<m_actions.end();a++){
 			//state transition
@@ -152,8 +152,10 @@ void Robot::writeStateTransition(int index,deque<int> *s,Action *a)
 
 		posterior_state.push_back(ps);
 	}
-	if(collisionWithBall())
-			return;
+
+	if(collisionWithTarget()){
+		return;
+	}
 
 
 	int ps = getStateIndex(&posterior_state);
@@ -166,7 +168,14 @@ void Robot::writeFinalStates(void)
 {
 	ofstream ofs("./values.0");
 	for(int i=0;i<getStateNum();i++){
-		if(collisionWithBall())
+		deque<int> s;
+		getEachStateNum(i,&s);
+
+		Arm *p = (Arm *)m_parts.at(0);
+		p->setAngle(p->indexToAngle(s[0]));
+		p = (Arm *)m_parts.at(1);
+		p->setAngle(p->indexToAngle(s[1]));
+		if(collisionWithTarget())
 			continue;
 		if(! isFinalState(i))
 			continue;
@@ -201,12 +210,12 @@ bool Robot::isFinalState(int index)
 	return ((Hand *)m_parts.at(2))->isInside(relative_x2,relative_y2);
 }
 
-bool Robot::collisionWithBall(void)
+bool Robot::collisionWithTarget(void)
 {
 	Coordinate prev_pos{0.0,0.0};
 	double prev_ang{0.0};
 	for(auto i=m_parts.begin();i!=m_parts.end();i++){
-		if((*i)->collisionWithBall(prev_pos,prev_ang,m_target))
+		if((*i)->collisionWithTarget(prev_pos,prev_ang,m_target))
 			return true;
 
 		prev_pos = (*i)->getEndPosition(prev_pos,prev_ang);

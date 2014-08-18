@@ -59,8 +59,19 @@ bool Hand::isInside(double relative_x, double relative_y)
 	return true;
 }
 
-bool Hand::collisionWithBall(Coordinate prev_pos,int prev_angle,Target *target)
+bool Hand::collisionWithTarget(Coordinate prev_pos,int prev_angle,Target *target)
 {
+	vector<Coordinate> end_poss = getEndPositions(prev_pos,prev_angle);
+	for(unsigned int i=0;i<end_poss.size()-1;i++){
+		Coordinate pos_a = end_poss[i];
+		Coordinate pos_b = end_poss[i+1];
+
+		//cerr << pos_a.x << " " << pos_b.x << " " << target->radius << endl;
+		if(collisionWithCircle(pos_a,pos_b,
+			Coordinate{target->x,target->y},target->radius)){
+			return true;
+		}
+	}
 	return false;
 }
 
