@@ -12,8 +12,9 @@ void die(string reason){
 
 int main(int argc, char const* argv[])
 {
-	//definition of ball to be gripped
-	//Target ball{50.0,100.0,5.0};
+	int x = atoi(argv[1]);
+	int y = atoi(argv[2]);
+	Target ball{x,y,5};
 
 	//definition of sys
 	/*
@@ -22,7 +23,7 @@ int main(int argc, char const* argv[])
 	Hand hand(30,30);
 */
 
-	System sys;
+	System sys(&ball);
 /*
 	sys.setPart(&arm0);
 	sys.setPart(&arm1);
@@ -33,8 +34,8 @@ int main(int argc, char const* argv[])
 		die("Policy Format Error");
 	}
 
-	sys.getPart(0)->setAngle(70);
-	sys.getPart(1)->setAngle(0);
+	sys.getPart(0)->setAngle(170);
+	sys.getPart(1)->setAngle(80);
 	if(! sys.doMotion()){
 		die("not in final state");
 		exit(1);

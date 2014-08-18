@@ -7,7 +7,7 @@
 #include <iomanip>
 using namespace std;
 
-System::System()
+System::System(Target *ball)
 {
 	//set of actions
 	vector<int> rr{-1,-1}, rn{-1,0}, rl{-1,1},
@@ -22,16 +22,14 @@ System::System()
 	m_actions.push_back(Action("ln",&ln));
 	m_actions.push_back(Action("ll",&ll));
 
+	m_target = ball;
 	//setup of state space and system
-	m_target = new Target{50.0,100.0,5.0};
-
 	m_parts.push_back(new Arm("arm0",100,0,180));
 	m_parts.push_back(new Arm("arm1",100,-160,160));
 	m_parts.push_back(new Hand(30,30));
 }
 System::~System()
 {
-	delete m_target;
 	for(auto &i : m_parts){
 		delete i;
 	}
@@ -237,7 +235,11 @@ bool System::collisionWithTarget(void)
 
 bool System::readPolicy(void)
 {
-	ifstream ifs("./policy");
+	stringstream ss;
+	ss << "./ans/policy." << m_target->x << "." << m_target->y << ".txt";
+	ifstream ifs(ss.str());
+
+	cout << ss.str() << endl;
 
 	unsigned int state;
 	string action;

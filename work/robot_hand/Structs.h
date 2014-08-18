@@ -10,7 +10,7 @@ struct Pixel{
 };
 
 struct Target{
-	double x,y,radius;
+	int x,y,radius;
 };
 
 #endif

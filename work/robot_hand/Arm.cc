@@ -59,7 +59,7 @@ bool Arm::collisionWithTarget(Coordinate prev_pos,int prev_angle,Target *target)
 {
 	Coordinate end_pos = getEndPosition(prev_pos,prev_angle);
 	return collisionWithCircle(prev_pos,end_pos,
-			Coordinate{target->x,target->y},target->radius);
+			Coordinate{(double)target->x,(double)target->y},target->radius);
 	
 /*
 	double dx = end_pos.x - prev_pos.x;

@@ -35,7 +35,7 @@ private:
 	void draw(int state);
 public:
 
-	System();
+	System(Target *ball);
 	virtual ~System();
 
 	Part *getPart(int index);

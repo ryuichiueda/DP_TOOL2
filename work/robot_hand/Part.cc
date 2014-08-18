@@ -12,7 +12,7 @@ int Part::getAngle(void)
 	return m_angle;
 }
 
-bool Part::collisionWithCircle(Coordinate p1, Coordinate p2, Coordinate pc, double radius)
+bool Part::collisionWithCircle(Coordinate p1, Coordinate p2, Coordinate pc,int radius)
 {
 	double dx = p2.x - p1.x;
 	double dy = p2.y - p1.y;
@@ -24,9 +24,11 @@ bool Part::collisionWithCircle(Coordinate p1, Coordinate p2, Coordinate pc, doub
 
 	double d2 = (pc.x - cx)*(pc.x - cx) + (pc.y - cy)*(pc.y - cy);
 
+	double radius2 = (double)radius * radius;
+
 	//if the distance from the center of the ball to the arm is larger than
 	//the radius of the ball, it's OK.
-	if(d2 > radius * radius){
+	if(d2 > radius2){
 		return false;
 	}
 	else if(t >= 0.0 && t <= 1.0){
@@ -37,7 +39,7 @@ bool Part::collisionWithCircle(Coordinate p1, Coordinate p2, Coordinate pc, doub
 	//the radius.
 	double end1_d2 = (pc.x - p2.x)*(pc.x - p2.x) + (pc.y - p2.y)*(pc.y - p2.y);
 	double end2_d2 = (pc.x - p1.x)*(pc.x - p1.x) + (pc.y - p1.y)*(pc.y - p1.y);
-	if(end1_d2 <= radius * radius || end2_d2 <= radius * radius){
+	if(end1_d2 <= radius2 || end2_d2 <= radius2){
 		return true;
 	}
 

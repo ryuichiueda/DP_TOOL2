@@ -14,7 +14,7 @@ protected:
 	int m_discrete_state;
 	vector<double> m_discrete_states;
 
-	virtual bool collisionWithCircle(Coordinate p1, Coordinate p2, Coordinate pc, double radius);
+	virtual bool collisionWithCircle(Coordinate p1, Coordinate p2, Coordinate pc,int radius);
 public:
 	Part();
 	virtual ~Part();
