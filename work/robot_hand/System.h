@@ -12,7 +12,7 @@ using namespace std;
 class Action;
 class Target;
 
-class Robot{
+class System{
 private:
 	vector<Part*> m_parts;
 	vector<Action> m_actions;
@@ -35,8 +35,8 @@ private:
 	void draw(int state);
 public:
 
-	Robot(Target *target);
-	virtual ~Robot();
+	System(Target *target);
+	virtual ~System();
 
 	Part *getPart(int index);
 	void setPart(Part *a);

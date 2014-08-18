@@ -1,4 +1,4 @@
-#include "Robot.h"
+#include "System.h"
 #include "Action.h"
 #include "Arm.h"
 #include "Hand.h"
@@ -7,7 +7,7 @@
 #include <iomanip>
 using namespace std;
 
-Robot::Robot(Target *target)
+System::System(Target *target)
 {
 	//set of actions
 	vector<int> rr{-1,-1}, rn{-1,0}, rl{-1,1},
@@ -24,17 +24,17 @@ Robot::Robot(Target *target)
 
 	m_target = target;
 }
-Robot::~Robot(){}
+System::~System(){}
 
-Part *Robot::getPart(int index){
+Part *System::getPart(int index){
 	if(index >= 0 && index < (int)m_parts.size())
 		return m_parts.at(index);
 
 	return NULL;
 }
-void Robot::setPart(Part *a){m_parts.push_back(a);}
+void System::setPart(Part *a){m_parts.push_back(a);}
 
-Coordinate Robot::getEndPosition(void)
+Coordinate System::getEndPosition(void)
 {
 	Coordinate c{0.0,0.0};
 	double ang = 0.0;
@@ -47,7 +47,7 @@ Coordinate Robot::getEndPosition(void)
 	return c;
 }
 
-int Robot::getEndAngle(void)
+int System::getEndAngle(void)
 {
 	int ang = 0;
 	for(auto i=m_parts.begin();i<m_parts.end();i++){
@@ -57,20 +57,20 @@ int Robot::getEndAngle(void)
 }
 
 /*
-bool Robot::stateTrans(vector<int> *s,int a,vector<int> *ps)
+bool System::stateTrans(vector<int> *s,int a,vector<int> *ps)
 {
 	return m_actions.at(a).stateTrans(this,s,ps);
 }
 */
 
 /*
-string &Robot::getActionName(int index)
+string &System::getActionName(int index)
 {
 	return m_actions.at(index).getName();
 }
 */
 
-int Robot::getStateNum(void)
+int System::getStateNum(void)
 {
 	int n = 1;
 	for(auto i=m_parts.begin();i<m_parts.end();i++){
@@ -79,7 +79,7 @@ int Robot::getStateNum(void)
 	return n;
 }
 
-void Robot::writeHeader(void)
+void System::writeHeader(void)
 {
 	cout << "%%metadata%%" << endl;
 	cout << "statenum " << getStateNum() << endl;
@@ -91,7 +91,7 @@ void Robot::writeHeader(void)
 	cout << endl;
 }
 
-void Robot::writeStateTransition(void)
+void System::writeStateTransition(void)
 {
 	cout << "%%state transitions%%" << endl;
 	for(int i=0;i<getStateNum();i++){
@@ -112,7 +112,7 @@ void Robot::writeStateTransition(void)
 	}
 }
 
-void Robot::getEachStateNum(int index,deque<int> *res)
+void System::getEachStateNum(int index,deque<int> *res)
 {
 	int carry = index;
 	for(auto i=m_parts.rbegin();i!=m_parts.rend();i++){
@@ -125,7 +125,7 @@ void Robot::getEachStateNum(int index,deque<int> *res)
 	}
 }
 
-int Robot::getStateIndex(vector<int> *s)
+int System::getStateIndex(vector<int> *s)
 {
 	int index = 0;
 	for(unsigned int i=0;i<m_parts.size();i++){
@@ -139,7 +139,7 @@ int Robot::getStateIndex(vector<int> *s)
 	return index;
 }
 
-void Robot::writeStateTransition(int index,deque<int> *s,Action *a)
+void System::writeStateTransition(int index,deque<int> *s,Action *a)
 {
 	vector<int> posterior_state;
 	for(unsigned int i=0;i<s->size();i++){
@@ -164,7 +164,7 @@ void Robot::writeStateTransition(int index,deque<int> *s,Action *a)
 	cout << "\tstate " << ps << " prob. 1 cost 1000" << endl;
 }
 
-void Robot::writeFinalStates(void)
+void System::writeFinalStates(void)
 {
 	ofstream ofs("./values.0");
 	for(int i=0;i<getStateNum();i++){
@@ -184,7 +184,7 @@ void Robot::writeFinalStates(void)
 	}
 }
 
-bool Robot::isFinalState(int index)
+bool System::isFinalState(int index)
 {
 	//hard coding 
 	//it should be improved
@@ -210,7 +210,7 @@ bool Robot::isFinalState(int index)
 	return ((Hand *)m_parts.at(2))->isInside(relative_x2,relative_y2);
 }
 
-bool Robot::collisionWithTarget(void)
+bool System::collisionWithTarget(void)
 {
 	Coordinate prev_pos{0.0,0.0};
 	double prev_ang{0.0};
@@ -224,7 +224,7 @@ bool Robot::collisionWithTarget(void)
 	return false;
 }
 
-bool Robot::readPolicy(void)
+bool System::readPolicy(void)
 {
 	ifstream ifs("./policy");
 
@@ -268,7 +268,7 @@ bool Robot::readPolicy(void)
 	return true;
 }
 
-int Robot::getActionIndex(string &name)
+int System::getActionIndex(string &name)
 {
 	for(unsigned int i=0;i<m_actions.size();i++){
 		if(m_actions[i].getName() == name){
@@ -278,7 +278,7 @@ int Robot::getActionIndex(string &name)
 	return -1;
 }
 
-bool Robot::doMotion(void)
+bool System::doMotion(void)
 {
 	while(oneStepMotion()){}
 
@@ -292,7 +292,7 @@ bool Robot::doMotion(void)
 	return isFinalState(i);
 }
 
-bool Robot::oneStepMotion(void)
+bool System::oneStepMotion(void)
 {
 	vector<int> eachstate;
 	for(auto &s : m_parts){
@@ -325,7 +325,7 @@ bool Robot::oneStepMotion(void)
 	return true;
 }
 
-void Robot::draw(int state)
+void System::draw(int state)
 {
 	static int counter = 0;
 

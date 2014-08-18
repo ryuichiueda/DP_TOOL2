@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include "Robot.h"
+#include "System.h"
 #include "Arm.h"
 #include "Hand.h"
 using namespace std;
@@ -28,23 +28,23 @@ int main(int argc, char const* argv[])
 	//definition of ball to be gripped
 	Target ball{50.0,100.0,5.0};
 
-	//definition of robot
+	//definition of sys
 	Arm arm0("arm0",100,0,180);
 	Arm arm1("arm1",100,-160,160);
 	Hand hand(30,30);
 
-	Robot robot(&ball);
-	robot.setPart(&arm0);
-	robot.setPart(&arm1);
-	robot.setPart(&hand);
+	System sys(&ball);
+	sys.setPart(&arm0);
+	sys.setPart(&arm1);
+	sys.setPart(&hand);
 
-	if(! robot.readPolicy()){
+	if(! sys.readPolicy()){
 		die("Policy Format Error");
 	}
 
-	robot.getPart(0)->setAngle(70);
-	robot.getPart(1)->setAngle(0);
-	if(! robot.doMotion()){
+	sys.getPart(0)->setAngle(70);
+	sys.getPart(1)->setAngle(0);
+	if(! sys.doMotion()){
 		die("not in final state");
 		exit(1);
 	}

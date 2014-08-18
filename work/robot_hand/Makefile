@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -Wall -O3 --static -std=c++11
 LDFLAGS = -lm
-SRCS = Action.cc  Arm.cc  Hand.cc  Part.cc  Robot.cc
+SRCS = Action.cc  Arm.cc  Hand.cc  Part.cc  System.cc
 OBJS := $(SRCS:.cc=.o)
 
 all: calc_state_trans motion
