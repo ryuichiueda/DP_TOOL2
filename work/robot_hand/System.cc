@@ -233,13 +233,60 @@ bool System::collisionWithTarget(void)
 	return false;
 }
 
+bool System::readValues(int x,int y)
+{
+	stringstream ss;
+	ss << "./ans/values." << x << "." << y << ".txt";
+	ifstream ifs(ss.str());
+
+	if(ifs.fail()){
+		cerr << "no file" << endl;
+		return true;
+	}
+
+	if(x < -150 || x > 150 || y < 0 || y > 150){
+		cerr << "out of range" << endl;
+		return true;
+	}
+	int ix = x + 150;
+
+	auto &v = m_planned.m_value_func[ix][y];
+
+	unsigned int state;
+	long unsigned int v_tmp;
+	const long unsigned int max = 65000;
+	while(1){
+		ifs >> state >> v_tmp;
+		if(ifs.eof())
+			break;
+
+		if(state == v.size()){
+			if(v_tmp > max)
+				v.push_back(0);
+			else
+				v.push_back((unsigned short)v_tmp);
+		}
+		else if(state > v.size()){
+			while(state != v.size()){
+				v.push_back(0);//final state
+			}
+			if(v_tmp > max)
+				v.push_back(0);
+			else
+				v.push_back((unsigned short)v_tmp);
+		}
+		else{
+			return false;		
+		}
+	}
+	return true;
+}
+
 bool System::readPolicy(void)
 {
 	stringstream ss;
 	ss << "./ans/policy." << m_target->x << "." << m_target->y << ".txt";
 	ifstream ifs(ss.str());
-
-	cout << ss.str() << endl;
 
 	unsigned int state;
 	string action;
@@ -305,6 +352,53 @@ bool System::doMotion(void)
 
 	draw(i);
 	return isFinalState(i);
+}
+
+bool System::doPfcMotion(void)
+{
+	while(oneStepPfc()){}
+
+	vector<int> eachstate;
+	for(auto &s : m_parts){
+		eachstate.push_back(s->getState());
+	}	
+	int i = getStateIndex(&eachstate);
+
+	draw(i);
+	return isFinalState(i);
+}
+
+bool System::oneStepPfc(void)
+{
+	vector<int> eachstate;
+	for(auto &s : m_parts){
+		eachstate.push_back(s->getState());
+	}	
+	int i = getStateIndex(&eachstate);
+	draw(i);
+
+	cout << i;
+	Action *a = NULL;
+	if(m_policy[i] >= 0){
+		a = &m_actions.at(m_policy[i]);
+ 		cout << " " << a->getName();
+	}
+	else
+ 		cout << " " << "final";
+
+	for(unsigned int p=0;p<m_parts.size();p++){
+		cout << " " << m_parts[p]->getAngle();
+		if(a != NULL){
+			int angle = m_parts[p]->getAngle() + a->getDelta(p);
+			m_parts[p]->setAngle(angle);
+		}
+	}
+	cout << endl;
+
+	if(a == NULL)
+		return false;
+
+	return true;
 }
 
 bool System::oneStepMotion(void)
@@ -376,6 +470,13 @@ void System::draw(int state)
 		int x = (int)((m_target->x + m_target->radius*cos(r))*mag) + cx;
 		int y = (int)((m_target->y + m_target->radius*sin(r))*mag) + cy;
 		image[x][y] = {255,0,0};
+	}
+
+	//particles
+	for(auto &i : m_pf.m_particles){
+		int x = (int)(i.x*mag + cx);
+		int y = (int)(i.y*mag + cy);
+		image[x][y] = {0,0,255};
 	}
 
 	ofs << "P3" << endl;

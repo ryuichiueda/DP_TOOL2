@@ -5,12 +5,31 @@
 #include <vector>
 #include <deque>
 #include <cmath>
-#include "Part.h"
+#include "ParticleFilter.h"
 #include "Structs.h"
 using namespace std;
 
+class Part;
 class Action;
 struct Target;
+class ParticleFilter;
+
+class PlannedResult{
+public:
+	vector<int> m_policy;
+	vector<unsigned short> *m_value_func[301];
+
+	PlannedResult()
+	{
+		for(int i=0;i<301;i++)
+			m_value_func[i] = new vector<unsigned short>[151];
+	}
+	~PlannedResult()
+	{
+		for(int i=0;i<301;i++)
+			delete [] m_value_func[i];
+	}
+};
 
 class System{
 private:
@@ -29,12 +48,17 @@ private:
 	bool isFinalState(int index);
 
 	vector<int> m_policy;
+	PlannedResult m_planned;
 
 	bool oneStepMotion(void);
+	bool oneStepPfc(void);
 
 	void draw(int state);
-public:
 
+	//particle filter
+	ParticleFilter m_pf;
+
+public:
 	System(Target *ball);
 	virtual ~System();
 
@@ -54,9 +78,11 @@ public:
 	bool collisionWithTarget(void);
 
 	bool readPolicy(void);
+	bool readValues(int x, int y);
 
 	//functions for simulation
 	bool doMotion(void);
+	bool doPfcMotion(void);
 };
 
 #endif

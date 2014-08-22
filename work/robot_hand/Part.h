@@ -1,6 +1,7 @@
 #ifndef _PART_H__
 #define _PART_H__
 
+#include "Structs.h"
 #include <vector>
 using namespace std;
 

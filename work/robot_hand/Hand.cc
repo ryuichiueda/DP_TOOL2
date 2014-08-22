@@ -68,7 +68,7 @@ bool Hand::collisionWithTarget(Coordinate prev_pos,int prev_angle,Target *target
 
 		//cerr << pos_a.x << " " << pos_b.x << " " << target->radius << endl;
 		if(collisionWithCircle(pos_a,pos_b,
-			Coordinate{target->x,target->y},target->radius)){
+			Coordinate{(double)target->x,(double)target->y},target->radius)){
 			return true;
 		}
 	}
