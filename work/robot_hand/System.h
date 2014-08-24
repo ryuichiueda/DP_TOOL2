@@ -26,8 +26,9 @@ public:
 	}
 	~PlannedResult()
 	{
-		for(int i=0;i<301;i++)
+		for(int i=0;i<301;i++){
 			delete [] m_value_func[i];
+		}
 	}
 };
 
@@ -76,6 +77,7 @@ public:
 	void writeFinalStates(void);
 
 	bool collisionWithTarget(void);
+	bool collisionWithTarget(Target *t);
 
 	bool readPolicy(void);
 	bool readValues(int x, int y);

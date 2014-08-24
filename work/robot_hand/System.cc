@@ -219,8 +219,24 @@ bool System::isFinalState(int index)
 	return ((Hand *)m_parts.at(2))->isInside(relative_x2,relative_y2);
 }
 
+bool System::collisionWithTarget(Target *t)
+{
+	Coordinate prev_pos{0.0,0.0};
+	double prev_ang{0.0};
+	for(auto i=m_parts.begin();i!=m_parts.end();i++){
+		if((*i)->collisionWithTarget(prev_pos,prev_ang,t))
+			return true;
+
+		prev_pos = (*i)->getEndPosition(prev_pos,prev_ang);
+		prev_ang += (*i)->getAngle();
+	}
+	return false;
+}
+
 bool System::collisionWithTarget(void)
 {
+	return collisionWithTarget(m_target);
+/*
 	Coordinate prev_pos{0.0,0.0};
 	double prev_ang{0.0};
 	for(auto i=m_parts.begin();i!=m_parts.end();i++){
@@ -231,6 +247,7 @@ bool System::collisionWithTarget(void)
 		prev_ang += (*i)->getAngle();
 	}
 	return false;
+*/
 }
 
 bool System::readValues(int x,int y)
@@ -342,7 +359,17 @@ int System::getActionIndex(string &name)
 
 bool System::doMotion(void)
 {
-	while(oneStepMotion()){}
+	while(oneStepMotion()){
+		for(auto &i : m_pf.m_particles){
+			if(i.w < 0.00001)
+				continue;
+	
+			Target t{i.x,i.y,m_target->radius};
+			if(collisionWithTarget(&t)){
+				i.w = 0.0;
+			}
+		}
+	}
 
 	vector<int> eachstate;
 	for(auto &s : m_parts){
@@ -351,12 +378,24 @@ bool System::doMotion(void)
 	int i = getStateIndex(&eachstate);
 
 	draw(i);
+
+
 	return isFinalState(i);
 }
 
 bool System::doPfcMotion(void)
 {
-	while(oneStepPfc()){}
+	while(oneStepPfc()){
+		for(auto &i : m_pf.m_particles){
+			if(i.w < 0.00001)
+				continue;
+	
+			Target t{i.x,i.y,m_target->radius};
+			if(collisionWithTarget(&t)){
+				i.w = 0.0;
+			}
+		}
+	}
 
 	vector<int> eachstate;
 	for(auto &s : m_parts){
@@ -378,6 +417,7 @@ bool System::oneStepPfc(void)
 	draw(i);
 
 	cout << i;
+	cerr << "!!" << endl;
 	Action *a = NULL;
 	if(m_policy[i] >= 0){
 		a = &m_actions.at(m_policy[i]);
@@ -474,6 +514,9 @@ void System::draw(int state)
 
 	//particles
 	for(auto &i : m_pf.m_particles){
+		if(i.w < 0.1)
+			continue;
+
 		int x = (int)(i.x*mag + cx);
 		int y = (int)(i.y*mag + cy);
 		image[x][y] = {0,0,255};

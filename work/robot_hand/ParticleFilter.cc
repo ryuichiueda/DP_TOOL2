@@ -4,10 +4,9 @@ using namespace std;
 
 ParticleFilter::ParticleFilter()
 {
-	for(int x=-149;x<=149;x+=2){
-		for(int y=0;y<=149;y+=2){
+	for(int x=0;x<=149;x++){
+		for(int y=0;y<=149;y++){
 			m_particles.push_back(Particle{x,y,1.0});
-			
 		}
 	}
 	m_particle_num = m_particles.size();

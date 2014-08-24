@@ -34,8 +34,8 @@ int main(int argc, char const* argv[])
 		die("Policy Format Error");
 	}
 
-	sys.getPart(0)->setAngle(170);
-	sys.getPart(1)->setAngle(80);
+	sys.getPart(0)->setAngle(10);
+	sys.getPart(1)->setAngle(10);
 	if(! sys.doMotion()){
 		die("not in final state");
 		exit(1);

@@ -18,15 +18,14 @@ int main(int argc, char const* argv[])
 
 	System sys(&ball);
 
-	for(int bx=120;bx<=130;bx++){
+	for(int bx=140;bx<=149;bx++){
 		cerr << bx << endl;
-		for(int by=100;by<=120;by++){
+		for(int by=140;by<=149;by++){
 			if(! sys.readValues(bx,by)){
 				die("Value Format Error");
 			}
 		}
 	}
-	return 0;
 
 	sys.getPart(0)->setAngle(170);
 	sys.getPart(1)->setAngle(80);

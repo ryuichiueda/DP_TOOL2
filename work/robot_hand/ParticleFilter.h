@@ -14,6 +14,7 @@ public:
 	vector<Particle> m_particles;
 
 	void print(void);
+
 };
 
 #endif
